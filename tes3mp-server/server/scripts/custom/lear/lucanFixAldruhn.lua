@@ -1,3 +1,8 @@
+local lucanFixAldruhnConfig = {}
+
+lucanFixAldruhnConfig.respawnTimer = 900 -- This is how long in seconds before Lucan should be allowed to spawn again for the
+						-- same player. This is if, say, the server crashes or the player wanders off
+						-- from the cell. 900 = 15 mins which is the default.
 
 --[[
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -38,7 +43,7 @@ customEventHooks.registerHandler("OnPlayerCellChange", function(eventStatus, pid
 		if (tableHelper.containsKeyValuePairs(Players[pid].data.journal, { quest = "mv_thieftrader", index = 20 }, true) or tableHelper.containsKeyValuePairs(Players[pid].data.journal, { quest = "mv_thieftrader", index = 25 }, true)) and not tableHelper.containsKeyValuePairs(Players[pid].data.journal, { quest = "mv_thieftrader", index = 90 }, true) then
 			if (Players[pid].data.customVariables.lear.questFixes.mv_thieftrader_spawn_timer == nil or os.time() >= Players[pid].data.customVariables.lear.questFixes.mv_thieftrader_spawn_timer) then
 				logicHandler.RunConsoleCommandOnPlayer(pid, "startscript lucan_ostorius")
-				local respawnTimer = 900
+				local respawnTimer = lucanFixAldruhnConfig.respawnTimer
 				respawnTimer = respawnTimer + os.time()
 				Players[pid].data.customVariables.lear.questFixes.mv_thieftrader_spawn_timer = respawnTimer
 			end
