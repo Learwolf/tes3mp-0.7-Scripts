@@ -4,7 +4,27 @@ dbAssassinsConfig.levelRequirement = 30 -- This sets the level required to spawn
 dbAssassinsConfig.spawnChance = 100 -- This is the percentage that an Assassin will spawn when the above set leveled player uses a bed.
 									-- Example: Set this to 100 for 100% chance, 50 for a 50% chance, etc. and 0 for Assassins to never spawn.
 
-
+--[[
+~~~~~
+DON'T
+~~~~~
+TOUCH
+~~~~~
+BELOW
+~~~~~
+UNLESS
+~~~~~
+YOU
+~~~~~
+KNOW
+~~~~~
+WHAT
+~~~~~
+YOU'RE
+~~~~~
+DOING.
+~~~~~
+]]
 local Methods = {}
 
 local split = function(s, delimiter)
