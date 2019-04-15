@@ -85,9 +85,19 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
 		
 		for id, bedObject in pairs(listOfBeds) do
 			if object.refId == bedObject then	
+				
+				-- If Lear variables dont exist, create them.
+				if Players[pid].data.customVariables.lear == nil then
+					Players[pid].data.customVariables.lear = {}
+				end
+				if Players[pid].data.customVariables.lear.questFixes == nil then
+					Players[pid].data.customVariables.lear.questFixes = {}
+				end
+				
+				-- Continue with script.
 				if not tableHelper.containsKeyValuePairs(currentPlayer.data.journal, { quest = "tr_dbattack", index = 10 }, true) then
 					logicHandler.RunConsoleCommandOnPlayer(pid, "stopscript dbAttackScript")
-					if (Players[pid].data.customVariables.dbAttackCheck == nil and Players[pid].data.stats.level >= dbAssassinsConfig.levelRequirement) then
+					if (Players[pid].data.customVariables.lear.questFixes.dbAttackCheck == nil and Players[pid].data.stats.level >= dbAssassinsConfig.levelRequirement) then
 						tes3mp.MessageBox(pid, -1, color.MsgBox .. "Test.")
 						if dbAssassinsConfig.spawnChance > 100 then	
 							dbAssassinsConfig.spawnChance = 100
@@ -100,7 +110,7 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
 								--logicHandler.RunConsoleCommandOnPlayer(pid, "PlaceAtPC \"db_assassin4\" 1 128 1")
 								logicHandler.CreateObjectAtPlayer(pid, "db_assassin4", "spawn")
 								logicHandler.RunConsoleCommandOnPlayer(pid, "Journal TR_DBAttack 10")
-								Players[pid].data.customVariables.dbAttackCheck = 1
+								Players[pid].data.customVariables.lear.questFixes.dbAttackCheck = 1
 								--logicHandler.RunConsoleCommandOnPlayer(pid, "Journal TR_DBAttack 20")
 							end
 						else
