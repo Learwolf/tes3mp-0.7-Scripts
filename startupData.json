@@ -1,0 +1,1440 @@
+{
+    "onLogin":{
+        "1":{
+            "quest":"co_1",
+            "index":50,
+            "outcome1":"set colonyState to 1",
+            "outcome2":"startscript, ColonyTimer",
+            "scriptName":"colonyTimer",
+            "timerName":"daysPassed"
+        },
+        "2":{
+            "quest":"co_2",
+            "index":10,
+            "outcome1":"set colonyTimer.daysPassed to 0"
+        },
+        "3":{
+            "quest":"colony_update",
+            "index":10,
+            "outcome1":"set colonyState to 2"
+        },
+        "4":{
+            "quest":"co_2",
+            "index":90,
+            "scriptName":"colonyTimer",
+            "timerName":"daysPassed"
+        },
+        "5":{
+            "quest":"co_3",
+            "index":10,
+            "outcome1":"set colonyTimer.daysPassed to 0"
+        },
+        "6":{
+            "quest":"colony_update",
+            "index":20,
+            "outcome1":"set colonyState to 3"
+        },
+        "7":{
+            "quest":"co_3",
+            "index":70,
+            "outcome1":"set colonyState to 4",
+            "scriptName":"colonyTimer",
+            "timerName":"daysPassed"
+        },
+        "8":{
+            "quest":"co_choice",
+            "index":22,
+            "outcome1":"set colonyTimer.daysPassed to 0"
+        },
+        "9":{
+            "quest":"colony_update",
+            "index":30,
+            "outcome1":"set colonyState to 5"
+        },
+        "10":{
+            "quest":"co_6a",
+            "index":60,
+            "outcome1":"set colonyState to 9",
+            "scriptName":"colonyTimer",
+            "timerName":"daysPassed"
+        },
+        "11":{
+            "quest":"co_6a",
+            "index":80,
+            "outcome1":"set colonyState to 9",
+            "scriptName":"colonyTimer",
+            "timerName":"daysPassed"
+        },
+        "12":{
+            "quest":"co_7",
+            "index":10,
+            "outcome1":"set colonyTimer.daysPassed to 0"
+        },
+        "13":{
+            "quest":"colony_update",
+            "index":40,
+            "outcome1":"set colonyState to 10"
+        },
+        "14":{
+            "quest":"co_7",
+            "index":80,
+            "outcome1":"set colonyState to 11"
+        },
+        "15":{
+            "quest":"co_7",
+            "index":90,
+            "outcome1":"set colonyState to 11"
+        },
+        "16":{
+            "quest":"co_7",
+            "index":100,
+            "outcome1":"set colonyState to 11"
+        },
+        "17":{
+            "quest":"co_7",
+            "index":110,
+            "outcome1":"set colonyState to 11"
+        },
+        "18":{
+            "quest":"co_9",
+            "index":60,
+            "outcome1":"set colonyState to 12",
+            "scriptName":"colonyTimer",
+            "timerName":"daysPassed"
+        },
+        "19":{
+            "quest":"co_9a",
+            "index":90,
+            "outcome1":"set colonyState to 12",
+            "scriptName":"colonyTimer",
+            "timerName":"daysPassed"
+        },
+        "20":{
+            "quest":"co_9a",
+            "index":100,
+            "outcome1":"set colonyState to 12",
+            "scriptName":"colonyTimer",
+            "timerName":"daysPassed"
+        },
+        "21":{
+            "quest":"co_10",
+            "index":10,
+            "outcome1":"set colonyTimer.daysPassed to 0"
+        },
+        "22":{
+            "quest":"co_11",
+            "index":60,
+            "outcome1":"set colonyState to 13",
+            "scriptName":"colonyTimer",
+            "timerName":"daysPassed"
+        },
+        "23":{
+            "quest":"co_12",
+            "index":10,
+            "outcome1":"set colonyTimer.daysPassed to 0"
+        },
+        "24":{
+            "quest":"co_11",
+            "index":70,
+            "outcome1":"set colonyState to 13",
+            "scriptName":"colonyTimer",
+            "timerName":"daysPassed"
+        },
+        "25":{
+            "quest":"co_12a",
+            "index":10,
+            "outcome1":"set colonyTimer.daysPassed to 0"
+        },
+        "26":{
+            "quest":"colony_update",
+            "index":50,
+            "outcome1":"set colonyState to 20"
+        },
+        "27":{
+            "quest":"co_12a",
+            "index":50,
+            "scriptName":"colonyTimer",
+            "timerName":"daysPassed"
+        },
+        "28":{
+            "quest":"co_13a",
+            "index":10,
+            "outcome1":"set colonyTimer.daysPassed to 0"
+        },
+        "29":{
+            "quest":"co_12",
+            "index":110,
+            "scriptName":"colonyTimer",
+            "timerName":"daysPassed"
+        },
+        "30":{
+            "quest":"co_13",
+            "index":1,
+            "outcome1":"set colonyTimer.daysPassed to 0"
+        },
+        "31":{
+            "quest":"colony_update",
+            "index":60,
+            "outcome1":"set colonyState to 21"
+        },
+        "32":{
+            "quest":"co_13",
+            "index":5,
+            "outcome1":"set colonyState to 22"
+        },
+        "33":{
+            "quest":"co_13a",
+            "index":10,
+            "outcome1":"set colonyState to 22"
+        },
+        "34":{
+            "quest":"co_13",
+            "index":70,
+            "outcome1":"set colonyState to 23",
+            "scriptName":"colonyTimer",
+            "timerName":"daysPassed"
+        },
+        "35":{
+            "quest":"co_estate",
+            "index":10,
+            "outcome1":"set colonyTimer.daysPassed to 0"
+        },
+        "36":{
+            "quest":"co_13a",
+            "index":60,
+            "outcome1":"set colonyState to 23",
+            "scriptName":"colonyTimer",
+            "timerName":"daysPassed"
+        },
+        "37":{
+            "quest":"co_estate",
+            "index":10,
+            "outcome1":"set colonyTimer.daysPassed to 0",
+            "outcome2":"set colonyState to 30"
+        },
+        "38":{
+            "quest":"colony_update",
+            "index":70,
+            "outcome1":"set colonyState to 30"
+        },
+        "39":{
+            "quest":"co_13",
+            "index":70,
+            "outcome1":"set colonyState to 30"
+        },
+        "40":{
+            "quest":"co_estate",
+            "index":40,
+            "outcome1":"set colonyState to 31",
+            "outcome2":"startscript, colonyEstateTimer",
+            "scriptName":"colonyEstateTimer",
+            "timerName":"dayspassed"
+        },
+        "41":{
+            "quest":"co_estate",
+            "index":50,
+            "outcome1":"set colonyState to 34"
+        },
+        "42":{
+            "quest":"co_4",
+            "index":30,
+            "outcome1":"set colonyService to 1"
+        },
+        "43":{
+            "quest":"co_4",
+            "index":60,
+            "outcome1":"set colonyService to 1",
+            "outcome2":"startscript, ColonyServTimer",
+            "scriptName":"ColonyServTimer",
+            "timerName":"dayspassed"
+        },
+        "44":{
+            "quest":"co_4",
+            "index":40,
+            "outcome1":"set colonyService to 2"
+        },
+        "45":{
+            "quest":"co_4",
+            "index":50,
+            "outcome1":"startscript, ColonyServTimer",
+            "scriptName":"ColonyServTimer",
+            "timerName":"dayspassed"
+        },
+        "46":{
+            "quest":"co_4",
+            "index":70,
+            "outcome1":"set colonyService to 2",
+            "outcome2":"startscript, ColonyServTimer",
+            "scriptName":"ColonyServTimer",
+            "timerName":"dayspassed"
+        },
+        "47":{
+            "quest":"co_4",
+            "index":80,
+            "outcome1":"set colonyService to 3"
+        },
+        "48":{
+            "quest":"co_4",
+            "index":90,
+            "outcome1":"set colonyService to 4"
+        },
+        "49":{
+            "quest":"co_4",
+            "index":100,
+            "outcome1":"set colonyService to 5"
+        },
+        "50":{
+            "quest":"co_4",
+            "index":110,
+            "outcome1":"set colonyService to 6"
+        },
+        "51":{
+            "quest":"co_choice",
+            "index":40,
+            "outcome1":"set colonySide to 1",
+            "outcome2":"set colonyState to 5"
+        },
+        "52":{
+            "quest":"co_choice",
+            "index":50,
+            "outcome1":"set colonySide to 2",
+            "outcome2":"set colonyState to 5"
+        },
+        "53":{
+            "quest":"co_choice",
+            "index":40,
+            "outcome1":"set colonySide to 1",
+            "outcome2":"set colonyState to 5"
+        },
+        "54":{
+            "quest":"tr_mhattack",
+            "index":30,
+            "outcome1":"set MournholdAttack to -1"
+        },
+        "55":{
+            "quest":"bm_skaalattack",
+            "index":95,
+            "outcome1":"set PCWerewolf to 1",
+            "outcome2":"Startscript, WereChangeScript"
+        },
+        "56":{
+            "quest":"bm_ceremony2",
+            "index":10,
+            "outcome1":"set WereChangeScript.firstdream to 1",
+            "outcome2":"set WereChangeScript.dreamcount to 1"
+        },
+        "57":{
+            "quest":"bm_ceremony2",
+            "index":100,
+            "outcome1":"set werewolfclawmult to 35"
+        },
+        "58":{
+            "quest":"bm_bearhunt2",
+            "index":10,
+            "outcome1":"set WereChangeScript.dreamcount to 2"
+        },
+        "59":{
+            "quest":"bm_frostgiant2",
+            "index":10,
+            "outcome1":"set WereChangeScript.dreamcount to 3"
+        },
+        "60":{
+            "quest":"bm_wildhunt",
+            "index":25,
+            "outcome1":"set WereChangeScript.dreamcount to 4"
+        },
+        "61":{
+            "quest":"bm_lycanthrophycure",
+            "index":20,
+            "outcome1":"set PCWerewolf to -1"
+        },
+        "62":{
+            "quest":"da_boethiah",
+            "index":60,
+            "outcome1":"set shrineboethiah.dacurrentday to 2",
+            "scriptName":"shrineboethiah",
+            "timerName":"daysPassed"
+        },
+        "63":{
+            "quest":"da_boethiah",
+            "index":60,
+            "outcome1":"Startscript, shrineboethiah"
+        },
+        "64":{
+            "quest":"da_boethiah",
+            "index":61,
+            "outcome1":"set shrineboethiah.dayspassed to 19",
+            "outcome2":"set shrineboethiah.dacurrentday to 2",
+            "outcome3":"Startscript, shrineboethiah",
+            "outcome4":"set shrineboethiah.dacurrentday to 2"
+        },
+        "65":{
+            "quest":"tr_champion",
+            "index":20,
+            "outcome1":"set KarrodFightStart to 1",
+            "outcome2":"Starscript, karrodMovement"
+        },
+        "66":{
+            "quest":"tr_champion",
+            "index":50,
+            "outcome1":"set karrodBribe to 1"
+        },
+        "67":{
+            "quest":"tr_blade",
+            "index":60,
+            "outcome1":"Startscript, bladefixScript"
+        },
+        "68":{
+            "quest":"bm_beasts",
+            "index":10,
+            "outcome1":"set Act_BM_stone_beast_01.doOnce to 1"
+        },
+        "69":{
+            "quest":"bm_earth",
+            "index":10,
+            "outcome1":"set Act_BM_stone_earth_01.doOnce to 1"
+        },
+        "70":{
+            "quest":"bm_sun",
+            "index":10,
+            "outcome1":"set Act_BM_stone_sun_01.doOnce to 1"
+        },
+        "71":{
+            "quest":"bm_trees",
+            "index":10,
+            "outcome1":"set Act_BM_stone_tree_01.doOnce to 1"
+        },
+        "72":{
+            "quest":"bm_water",
+            "index":10,
+            "outcome1":"set Act_BM_stone_water_01.doOnce to 1"
+        },
+        "73":{
+            "quest":"bm_wind",
+            "index":10,
+            "outcome1":"set Act_BM_stone_wind_01.doOnce to 1"
+        },
+        "74":{
+            "quest":"bm_stones",
+            "index":60,
+            "outcome1":"set stones to ( stones ) + 1",
+            "outcome2":"act_bm_water_parts->enable"
+        },
+        "75":{
+            "quest":"bm_stones",
+            "index":62,
+            "outcome1":"set stones to ( stones ) + 1",
+            "outcome2":"act_bm_earth_parts->enable"
+        },
+        "76":{
+            "quest":"bm_stones",
+            "index":64,
+            "outcome1":"set stones to ( stones ) + 1",
+            "outcome2":"act_bm_tree_parts->enable"
+        },
+        "77":{
+            "quest":"bm_stones",
+            "index":66,
+            "outcome1":"set stones to ( stones ) + 1",
+            "outcome2":"act_bm_beast_parts->enable"
+        },
+        "78":{
+            "quest":"bm_stones",
+            "index":68,
+            "outcome1":"set stones to ( stones ) + 1",
+            "outcome2":"act_bm_sun_parts->enable"
+        },
+        "79":{
+            "quest":"bm_stones",
+            "index":70,
+            "outcome1":"set stones to ( stones ) + 1",
+            "outcome2":"act_bm_wind_parts->enable"
+        },
+        "80":{
+            "quest":"hh_stronghold",
+            "index":50,
+            "outcome1":"Startscript, Strong_Build_Start_H",
+            "scriptName":"Strong_Build_Start_H",
+            "timerName":"daysPassed"
+        },
+        "81":{
+            "quest":"hr_stronghold",
+            "index":50,
+            "outcome1":"Startscript, Strong_Build_Start_R",
+            "scriptName":"Strong_Build_Start_R",
+            "timerName":"daysPassed"
+        },
+        "82":{
+            "quest":"ht_stronghold",
+            "index":50,
+            "outcome1":"Startscript, Strong_Build_Start_T",
+            "scriptName":"Strong_Build_Start_T",
+            "timerName":"daysPassed"
+        },
+        "83":{
+            "quest":"hh_stronghold",
+            "index":55,
+            "outcome1":"set stronghold to 1"
+        },
+        "84":{
+            "quest":"hr_stronghold",
+            "index":55,
+            "outcome1":"set stronghold to 1"
+        },
+        "85":{
+            "quest":"ht_stronghold",
+            "index":55,
+            "outcome1":"set stronghold to 1"
+        },
+        "86":{
+            "quest":"hh_stronghold",
+            "index":70,
+            "outcome1":"Startscript, Strong_Build1_H",
+            "scriptName":"Strong_Build1_H",
+            "timerName":"daysPassed"
+        },
+        "87":{
+            "quest":"hr_stronghold",
+            "index":70,
+            "outcome1":"Startscript, Strong_Build1_R",
+            "scriptName":"Strong_Build1_R",
+            "timerName":"daysPassed"
+        },
+        "88":{
+            "quest":"ht_stronghold",
+            "index":70,
+            "outcome1":"Startscript, Strong_Build1_T",
+            "scriptName":"Strong_Build1_T",
+            "timerName":"daysPassed"
+        },
+        "89":{
+            "quest":"hh_stronghold",
+            "index":100,
+            "outcome1":"set stronghold to 2"
+        },
+        "90":{
+            "quest":"hr_stronghold",
+            "index":100,
+            "outcome1":"set stronghold to 2"
+        },
+        "91":{
+            "quest":"ht_stronghold",
+            "index":100,
+            "outcome1":"set stronghold to 2"
+        },
+        "92":{
+            "quest":"hh_stronghold",
+            "index":170,
+            "outcome1":"Startscript, Strong_Build2_H",
+            "outcome2":"set stronghold to 3",
+            "scriptName":"Strong_Build2_H",
+            "timerName":"daysPassed"
+        },
+        "93":{
+            "quest":"hr_stronghold",
+            "index":170,
+            "outcome1":"Startscript, Strong_Build2_R",
+            "outcome2":"set stronghold to 3",
+            "scriptName":"Strong_Build2_R",
+            "timerName":"daysPassed"
+        },
+        "94":{
+            "quest":"ht_stronghold",
+            "index":170,
+            "outcome1":"Startscript, Strong_Build2_T",
+            "outcome2":"set stronghold to 3",
+            "scriptName":"Strong_Build2_T",
+            "timerName":"daysPassed"
+        },
+        "95":{
+            "quest":"hh_stronghold",
+            "index":200,
+            "outcome1":"set stronghold to 4"
+        },
+        "96":{
+            "quest":"hr_stronghold",
+            "index":200,
+            "outcome1":"set stronghold to 4"
+        },
+        "97":{
+            "quest":"ht_stronghold",
+            "index":200,
+            "outcome1":"set stronghold to 4"
+        },
+        "98":{
+            "quest":"hh_stronghold",
+            "index":270,
+            "outcome1":"Startscript, Strong_Build3_H",
+            "outcome2":"set stronghold to 5",
+            "scriptName":"Strong_Build3_H",
+            "timerName":"daysPassed"
+        },
+        "99":{
+            "quest":"hr_stronghold",
+            "index":270,
+            "outcome1":"Startscript, Strong_Build3_R",
+            "outcome2":"set stronghold to 5",
+            "scriptName":"Strong_Build3_R",
+            "timerName":"daysPassed"
+        },
+        "100":{
+            "quest":"ht_stronghold",
+            "index":270,
+            "outcome1":"Startscript, Strong_Build3_T",
+            "outcome2":"set stronghold to 5",
+            "scriptName":"Strong_Build3_T",
+            "timerName":"daysPassed"
+        },
+        "101":{
+            "quest":"hh_stronghold",
+            "index":300,
+            "outcome1":"set stronghold to 6"
+        },
+        "102":{
+            "quest":"hr_stronghold",
+            "index":300,
+            "outcome1":"set stronghold to 6"
+        },
+        "103":{
+            "quest":"ht_stronghold",
+            "index":300,
+            "outcome1":"set stronghold to 6"
+        }
+    },
+    "onCellChange":{
+        "enable":{
+            "0, 22":{
+                "1":{
+                    "quest":"fg_vas",
+                    "index":10,
+                    "outcome1":"\"ulyne henim\"->enable"
+                },
+                "2":{
+                    "quest":"fg_vas",
+                    "index":100,
+                    "outcome1":"\"ulyne henim\"->disable"
+                }
+            },
+            "1, 24":{
+                "1":{
+                    "quest":"da_sheogorath",
+                    "index":10,
+                    "outcome1":"\"netch_giant_unique\"->enable"
+                },
+                "2":{
+                    "quest":"da_sheogorath",
+                    "index":70,
+                    "outcome1":"\"netch_giant_unique\"->disable"
+                }
+            },
+            "-11, 15":{
+                "1":{
+                    "quest":"hr_oldbluefin",
+                    "index":20,
+                    "outcome1":"\"slaughterfish_hr_sfavd\"->enable"
+                },
+                "2":{
+                    "quest":"hr_oldbluefin",
+                    "index":100,
+                    "outcome1":"\"slaughterfish_hr_sfavd\"->disable"
+                }
+            },
+            "-11, 9":{
+                "1":{
+                    "quest":"hr_findtharen",
+                    "index":10,
+                    "outcome1":"\"fedris tharen\"->enable"
+                },
+                "2":{
+                    "quest":"hr_findtharen",
+                    "index":100,
+                    "outcome1":"\"fedris tharen\"->disable"
+                },
+                "3":{
+                    "quest":"hr_findtharen",
+                    "index":110,
+                    "outcome1":"\"fedris tharen\"->disable"
+                }
+            },
+            "15, 5":{
+                "1":{
+                    "quest":"b3_zainabbride",
+                    "index":22,
+                    "outcome1":"\"falura llervu\"->enable"
+                }
+            },
+            "17, -6":{
+                "1":{
+                    "quest":"fg_nchurdamz",
+                    "index":10,
+                    "outcome1":"\"larienna macrina\"->enable"
+                },
+                "2":{
+                    "quest":"fg_nchurdamz",
+                    "index":100,
+                    "outcome1":"\"larienna macrina\"->disable"
+                },
+                "3":{
+                    "quest":"fg_nchurdamz",
+                    "index":110,
+                    "outcome1":"\"larienna macrina\"->disable"
+                }
+            },
+            "2, 23":{
+                "1":{
+                    "quest":"da_azura",
+                    "index":10,
+                    "outcome1":"\"ogrim_az\"->enable"
+                },
+                "2":{
+                    "quest":"da_azura",
+                    "index":30,
+                    "outcome1":"\"ogrim_az\"->disable"
+                },
+                "3":{
+                    "quest":"da_azura",
+                    "index":40,
+                    "outcome1":"\"ogrim_az\"->disable"
+                }
+            },
+            "2, 4":{
+                "1":{
+                    "quest":"tt_ministryheathen",
+                    "index":10,
+                    "outcome1":"\"assantushansar\"->enable"
+                },
+                "2":{
+                    "quest":"tt_ministryheathen",
+                    "index":100,
+                    "outcome1":"\"assantushansar\"->disable"
+                },
+                "3":{
+                    "quest":"tt_ministryheathen",
+                    "index":200,
+                    "outcome1":"\"assantushansar\"->disable"
+                }
+            },
+            "-2, 6":{
+                "1":{
+                    "quest":"va_vamphunter",
+                    "index":10,
+                    "outcome1":"\"ano vando\"->enable"
+                },
+                "2":{
+                    "quest":"va_vamphunter",
+                    "index":80,
+                    "outcome1":"\"ano vando\"->disable"
+                },
+                "3":{
+                    "quest":"va_vamphunter",
+                    "index":90,
+                    "outcome1":"\"ano vando\"->disable"
+                }
+            },
+            "3, 23":{
+                "1":{
+                    "quest":"da_azura",
+                    "index":10,
+                    "outcome1":"\"daedroth_az\"->enable",
+                    "outcome2":"\"hunger_az_02\"->enable",
+                    "outcome3":"\"hunger_az_01\"->enable",
+                    "outcome4":"\"atronach_flame_az\"->enable",
+                    "outcome5":"\"atronach_storm_az\"->enable"
+                },
+                "2":{
+                    "quest":"da_azura",
+                    "index":30,
+                    "outcome1":"\"daedroth_az\"->disable",
+                    "outcome2":"\"hunger_az_02\"->disable",
+                    "outcome3":"\"hunger_az_01\"->disable",
+                    "outcome4":"\"atronach_flame_az\"->disable",
+                    "outcome5":"\"atronach_storm_az\"->disable"
+                },
+                "3":{
+                    "quest":"da_azura",
+                    "index":40,
+                    "outcome1":"\"daedroth_az\"->disable",
+                    "outcome2":"\"hunger_az_02\"->disable",
+                    "outcome3":"\"hunger_az_01\"->disable",
+                    "outcome4":"\"atronach_flame_az\"->disable",
+                    "outcome5":"\"atronach_storm_az\"->disable"
+                }
+            },
+            "3, 24":{
+                "1":{
+                    "quest":"da_azura",
+                    "index":10,
+                    "outcome1":"\"golden saint_staada\"->enable"
+                },
+                "2":{
+                    "quest":"da_azura",
+                    "index":30,
+                    "outcome1":"\"golden saint_staada\"->disable"
+                },
+                "3":{
+                    "quest":"da_azura",
+                    "index":40,
+                    "outcome1":"\"golden saint_staada\"->disable"
+                }
+            },
+            "3, -9":{
+                "1":{
+                    "quest":"hh_escortmerchant",
+                    "index":10,
+                    "outcome1":"\"tarvyn faren\"->enable"
+                },
+                "2":{
+                    "quest":"hh_escortmerchant",
+                    "index":100,
+                    "outcome1":"\"tarvyn faren\"->disable"
+                }
+            },
+            "-5, -5":{
+                "1":{
+                    "quest":"hh_stronghold",
+                    "index":220,
+                    "outcome1":"\"fjorgeir\"->enable"
+                }
+            },
+            "-5, 9":{
+                "1":{
+                    "quest":"hr_stronghold",
+                    "index":240,
+                    "outcome1":"\"assimusa samsi\"->enable"
+                },
+                "2":{
+                    "quest":"hr_stronghold",
+                    "index":242,
+                    "outcome1":"\"assimusa samsi\"->enable"
+                },
+                "3":{
+                    "quest":"hr_stronghold",
+                    "index":245,
+                    "outcome1":"\"assimusa samsi\"->enable"
+                }
+            },
+            "8, 15":{
+                "1":{
+                    "quest":"ms_whiteguar",
+                    "index":10,
+                    "outcome1":"\"ashamanu\"->enable"
+                },
+                "2":{
+                    "quest":"ms_whiteguar",
+                    "index":70,
+                    "outcome1":"\"ashamanu\"->disable"
+                }
+            },
+            "-8, 2":{
+                "1":{
+                    "quest":"da_malacath",
+                    "index":10,
+                    "outcome1":"\"vala herennius\"->enable",
+                    "outcome2":"\"dreynis nothro\"->enable",
+                    "outcome3":"\"netch_bull_dead_2\"->enable",
+                    "outcome4":"\"farvyn oreyn\"->enable"
+                },
+                "2":{
+                    "quest":"da_malacath",
+                    "index":70,
+                    "outcome1":"\"vala herennius\"->disable",
+                    "outcome2":"\"dreynis nothro\"->disable",
+                    "outcome3":"\"netch_bull_dead_2\"->disable",
+                    "outcome4":"\"farvyn oreyn\"->disable"
+                }
+            },
+            "9, 15":{
+                "1":{
+                    "quest":"ms_whiteguar",
+                    "index":10,
+                    "outcome1":"\"guar_white_unique\"->enable"
+                },
+                "2":{
+                    "quest":"ms_whiteguar",
+                    "index":70,
+                    "outcome1":"\"guar_white_unique\"->disable"
+                }
+            },
+            "-9, 2":{
+                "1":{
+                    "quest":"da_malacath",
+                    "index":10,
+                    "outcome1":"\"netch_bull_dead\"->enable"
+                },
+                "2":{
+                    "quest":"da_malacath",
+                    "index":70,
+                    "outcome1":"\"netch_bull_dead\"->disable"
+                }
+            },
+            "9, -7":{
+                "1":{
+                    "quest":"fg_telasero",
+                    "index":10,
+                    "outcome1":"\"bk_notefromsondaale\"->enable"
+                },
+                "2":{
+                    "quest":"fg_telasero",
+                    "index":100,
+                    "outcome1":"\"bk_notefromsondaale\"->disable"
+                },
+                "3":{
+                    "quest":"fg_telasero",
+                    "index":110,
+                    "outcome1":"\"bk_notefromsondaale\"->disable"
+                }
+
+            },
+            "Ald-ruhn, Sarethi Manor":{
+                "1":{
+                    "quest":"hr_guardsarethi",
+                    "index":10,
+                    "outcome1":"\"redoran guard sarethi1\"->enable",
+                    "outcome2":"\"redoran guard sarethi2\"->enable"
+                },
+                "2":{
+                    "quest":"hr_guardsarethi",
+                    "index":100,
+                    "outcome1":"\"redoran guard sarethi1\"->disable",
+                    "outcome2":"\"redoran guard sarethi2\"->disable"
+                }
+            },
+            "Balmora, Balyn Omarel's House":{
+                "1":{
+                    "quest":"da_mephala",
+                    "index":50,
+                    "outcome1":"\"balyn omavel\"->disable",
+                    "outcome2":"\"balyn omavel-DEAD\"->enable",
+                    "outcome3":"\"furn_de_p_chair_02_UNI2\"->enable",
+                    "outcome4":"\"misc_com_metal_plate_07_UNI2\"->enable",
+                    "outcome5":"\"ingred_bread_01_UNI2\"->enable",
+                    "outcome6":"\"misc_com_wood_knife_UNI2\"->enable",
+                    "outcome7":"\"misc_com_wood_spoon_01_UNI2\"->enable",
+                    "outcome8":"\"misc_com_wood_fork_UNI2\"->enable",
+                    "outcome9":"\"furn_de_p_chair_02_UNI1\"->disable",
+                    "outcome10":"\"misc_com_metal_plate_07_UNI1\"->disable",
+                    "outcome11":"\"misc_com_wood_fork_UNI1\"->disable",
+                    "outcome12":"\"misc_com_wood_spoon_01_UNI1\"->disable",
+                    "outcome13":"\"misc_com_wood_knife_UNI1\"->disable"
+                }
+            },
+            "Balmora, Eight Plates":{
+                "1":{
+                    "quest":"mg_escortscholar2",
+                    "index":10,
+                    "outcome1":"\"itermerel\"->enable"
+                },
+                "2":{
+                    "quest":"mg_escortscholar2",
+                    "index":100,
+                    "outcome1":"\"itermerel\"->disable"
+                }
+            },
+            "Bthuand":{
+                "1":{
+                    "quest":"va_vampcurse",
+                    "index":40,
+                    "outcome1":"\"spell_breaker_unique\"->enable"
+                },
+                "2":{
+                    "quest":"va_vampcurse",
+                    "index":60,
+                    "outcome1":"\"spell_breaker_unique\"->disable"
+                }
+            },
+            "Cavern of the Incarnate":{
+                "1":{
+                    "quest":"a2_6_incarnate",
+                    "index":50,
+                    "outcome1":"\"Ghost_NPC_Ane Teria\"->enable",
+                    "outcome2":"\"Ghost_NPC_Conoon Chodal\"->enable",
+                    "outcome3":"\"Ghost_NPC_Erur-Dan\"->enable",
+                    "outcome4":"\"Ghost_NPC_Hort_Ledd\"->enable",
+                    "outcome5":"\"Ghost_NPC_Idrenie Nerot\"->enable",
+                    "outcome6":"\"Ghost_NPC_Peakstar\"->enable"
+                }
+            },
+            "Ghostgate, Tower of Dusk":{
+                "1":{
+                    "quest":"b8_meetvivec",
+                    "index":50,
+                    "outcome1":"\"Wulf\"->enable"
+                },
+                "2":{
+                    "quest":"ic30_imperial_veteran",
+                    "index":1,
+                    "outcome1":"\"Wulf\"->disable"
+                }
+            },
+            "Gnaar Mok, Nadene Rotheran's Shack":{
+                "1":{
+                    "quest":"romance_ahnassi",
+                    "index":40,
+                    "outcome1":"\"daren adryn\"->enable"
+                },
+                "2":{
+                    "quest":"romance_ahnassi",
+                    "index":45,
+                    "outcome1":"\"daren adryn\"->disable"
+                }
+            },
+            "Ilunibi, Soul's Rattle":{
+                "1":{
+                    "quest":"a2_2_6thhouse",
+                    "index":5,
+                    "outcome1":"\"dagoth gares\"->enable"
+                },
+                "2":{
+                    "quest":"a2_2_6thhouse",
+                    "index":50,
+                    "outcome1":"\"dagoth gares\"->disable"
+                }
+            },
+            "Indarys Manor, Berendas' House":{
+                "1":{
+                    "quest":"hr_stronghold",
+                    "index":240,
+                    "outcome1":"\"heniele milielle\"->enable"
+                },
+                "2":{
+                    "quest":"hr_stronghold",
+                    "index":242,
+                    "outcome1":"\"heniele milielle\"->enable"
+                },
+                "3":{
+                    "quest":"hr_stronghold",
+                    "index":245,
+                    "outcome1":"\"heniele milielle\"->enable"
+                }
+            },
+            "Kora-Dur":{
+                "1":{
+                    "quest":"da_molagbal",
+                    "index":10,
+                    "outcome1":"\"daedroth_menta_unique\"->enable"
+                },
+                "2":{
+                    "quest":"da_molagbal",
+                    "index":20,
+                    "outcome1":"\"daedroth_menta_unique\"->disable"
+                },
+                "3":{
+                    "quest":"da_molagbal",
+                    "index":30,
+                    "outcome1":"\"daedroth_menta_unique\"->disable"
+                }
+            },
+            "Mamaea, Sanctum of Black Hope":{
+                "1":{
+                    "quest":"a1_11_zainsubaniinformant",
+                    "index":50,
+                    "outcome1":"\"hannat zainsubani\"->enable"
+                },
+                "2":{
+                    "quest":"ms_hannat",
+                    "index":60,
+                    "outcome1":"\"hannat zainsubani\"->disable"
+                },
+                "3":{
+                    "quest":"ms_hannat",
+                    "index":110,
+                    "outcome1":"\"hannat zainsubani\"->disable"
+                }
+            },
+            "Nchurdamz, Interior":{
+                "1":{
+                    "quest":"fg_nchurdamz",
+                    "index":10,
+                    "outcome1":"\"daedroth_fg_nchur\"->enable"
+                },
+                "2":{
+                    "quest":"fg_nchurdamz",
+                    "index":90,
+                    "outcome1":"\"daedroth_fg_nchur\"->disable"
+                },
+                "3":{
+                    "quest":"fg_nchurdamz",
+                    "index":110,
+                    "outcome1":"\"daedroth_fg_nchur\"->disable"
+                }
+            },
+            "Rothan Ancestral Tomb":{
+                "1":{
+                    "quest":"hr_finddalobar",
+                    "index":10,
+                    "outcome1":"\"mathis dalobar\"->enable"
+                },
+                "2":{
+                    "quest":"hr_finddalobar",
+                    "index":70,
+                    "outcome1":"\"mathis dalobar\"->disable"
+                },
+                "3":{
+                    "quest":"hr_finddalobar",
+                    "index":200,
+                    "outcome1":"\"mathis dalobar\"->disable"
+                }
+            },
+            "Sadrith Mora, Dirty Muriel's Cornerclub":{
+                "1":{
+                    "quest":"mg_escortscholar1",
+                    "index":10,
+                    "outcome1":"\"tenyeminwe\"->enable"
+                },
+                "2":{
+                    "quest":"mg_escortscholar1",
+                    "index":100,
+                    "outcome1":"\"tenyeminwe\"->disable"
+                },
+                "3":{
+                    "quest":"tg_sadrithmoradefenses",
+                    "index":70,
+                    "outcome1":"\"natalinus flavonius\"->enable"
+                }
+            },
+            "Sadrith Mora, Tel Naga Great Hall":{
+                "1":{
+                    "quest":"hr_arobarkidnap",
+                    "index":10,
+                    "outcome1":"\"galmir\"->enable",
+                    "outcome2":"\"nartise arobar\"->enable"
+                },
+                "2":{
+                    "quest":"hr_arobarkidnap",
+                    "index":70,
+                    "outcome1":"\"galmir\"->disable",
+                    "outcome2":"\"nartise arobar\"->disable"
+                }
+            },
+            "Sadrith Mora, Telvanni Council House":{
+                "1":{
+                    "quest":"ht_baladasally",
+                    "index":50,
+                    "outcome1":"\"enar releth\"->enable"
+                },
+                "2":{
+                    "quest":"ht_baladasally",
+                    "index":100,
+                    "outcome1":"\"galos mathendis\"->disable"
+                }
+            },
+            "Telasero, Lower Level":{
+                "1":{
+                    "quest":"fg_telasero",
+                    "index":10,
+                    "outcome1":"\"sondaale of shimmerene\"->enable"
+                },
+                "2":{
+                    "quest":"fg_telasero",
+                    "index":75,
+                    "outcome1":"\"sondaale of shimmerene\"->disable"
+                },
+                "3":{
+                    "quest":"fg_telasero",
+                    "index":110,
+                    "outcome1":"\"sondaale of shimmerene\"->disable"
+                }
+            },
+            "Vivec, Arena Storage":{
+                "1":{
+                    "quest":"il_protectentius",
+                    "index":10,
+                    "outcome1":"\"saprius entius\"->enable"
+                },
+                "2":{
+                    "quest":"il_protectentius",
+                    "index":70,
+                    "outcome1":"\"saprius entius\"->disable"
+                },
+                "3":{
+                    "quest":"il_protectentius",
+                    "index":110,
+                    "outcome1":"\"saprius entius\"->disable"
+                }
+            },
+            "Vivec, Foreign Quarter Underworks":{
+                "1":{
+                    "quest":"town_vivec",
+                    "index":10,
+                    "outcome1":"\"dreamer prophet\"->enable"
+                },
+                "2":{
+                    "quest":"town_vivec",
+                    "index":50,
+                    "outcome1":"\"dreamer prophet\"->disable"
+                },
+                "3":{
+                    "quest":"town_vivec",
+                    "index":55,
+                    "outcome1":"\"dreamer prophet\"->disable"
+                }
+            },
+            "Vivec, Hall of Wisdom":{
+                "1":{
+                    "quest":"a2_4_milogone",
+                    "index":1,
+                    "outcome1":"\"key_private quarters\"->enable"
+                }
+            },
+            "Vivec, Hlaalu Prison Cells":{
+                "1":{
+                    "quest":"hr_stronghold",
+                    "index":130,
+                    "outcome1":"\"Frelene Acques\"->enable"
+                }
+            },
+            "Vivec, Milo's Quarters":{
+                "1":{
+                    "quest":"a2_4_milogone",
+                    "index":1,
+                    "outcome1":"\"bk_notetoamaya\"->enable"
+                }
+            },
+            "Vivec, St. Olms Underworks":{
+                "1":{
+                    "quest":"eb_deadmen",
+                    "index":20,
+                    "outcome1":"\"corprus_stalker_danar\"->enable"
+                },
+                "2":{
+                    "quest":"eb_deadmen",
+                    "index":60,
+                    "outcome1":"\"corprus_stalker_danar\"->disable"
+                }
+            },
+            "Vivec, Telvanni Enchanter":{
+                "1":{
+                    "quest":"eb_clients",
+                    "index":30,
+                    "outcome1":"\"bk_clientlist\"->enable"
+                },
+                "2":{
+                    "quest":"eb_clients",
+                    "index":50,
+                    "outcome1":"\"bk_clientlist\"->disable"
+                }
+            }
+        },
+        "disable":{
+            "0, 22":{
+                "outcome1":"\"ulyne henim\"->disable"
+            },
+            "0, -9":{
+                "outcome1":"\"dreamer_talker04\"->disable"
+            },
+            "1, 24":{
+                "outcome1":"\"netch_giant_unique\"->disable"
+            },
+            "-11, 15":{
+                "outcome1":"\"slaughterfish_hr_sfavd\"->disable"
+            },
+            "-11, 9":{
+                "outcome1":"\"fedris tharen\"->disable"
+            },
+            "-12, 11":{
+                "outcome1":"\"dreamer_talker09\"->disable"
+            },
+            "15, 5":{
+                "outcome1":"\"falura llervu\"->disable"
+            },
+            "17, -6":{
+                "outcome1":"\"larienna macrina\"->disable"
+            },
+            "2, 23":{
+                "outcome1":"\"ogrim_az\"->disable"
+            },
+            "-2, -3":{
+                "outcome1":"\"dreamer_talker01\"->disable"
+            },
+            "2, 4":{
+                "outcome1":"\"assantushansar\"->disable"
+            },
+            "-2, 5":{
+                "outcome1":"\"dreamer_talker03\"->disable"
+            },
+            "-2, 6":{
+                "outcome1":"\"ano vando\"->disable"
+            },
+            "-2, -8":{
+                "outcome1":"\"dreamer_talker05\"->disable"
+            },
+            "3, 23":{
+                "outcome1":"\"daedroth_az\"->disable",
+                "outcome2":"\"hunger_az_02\"->disable",
+                "outcome3":"\"hunger_az_01\"->disable",
+                "outcome4":"\"atronach_flame_az\"->disable",
+                "outcome5":"\"atronach_storm_az\"->disable"
+            },
+            "3, 24":{
+                "outcome1":"\"golden saint_staada\"->disable"
+            },
+            "3, -9":{
+                "outcome1":"\"tarvyn faren\"->disable"
+            },
+            "-4, 12":{
+                "outcome1":"\"dreamer_talker08\"->disable"
+            },
+            "4, -9":{
+                "outcome1":"\"dreamer_talker11\"->disable"
+            },
+            "-5, -5":{
+                "outcome1":"\"fjorgeir\"->disable"
+            },
+            "-5, 9":{
+                "outcome1":"\"assimusa samsi\"->disable"
+            },
+            "-6, -5":{
+                "outcome1":"\"dreamer_talker07\"->disable"
+            },
+            "6, -7":{
+                "outcome1":"\"dreamer_talker12\"->disable"
+            },
+            "8, 15":{
+                "outcome1":"\"ashamanu\"->disable"
+            },
+            "-8, 16":{
+                "outcome1":"\"dreamer_talker10\"->disable"
+            },
+            "-8, 2":{
+                "outcome1":"\"vala herennius\"->disable",
+                "outcome2":"\"dreynis nothro\"->disable",
+                "outcome3":"\"netch_bull_dead_2\"->disable",
+                "outcome4":"\"farvyn oreyn\"->disable"
+            },
+            "-8, 3":{
+                "outcome1":"\"dreamer_talker06\"->disable"
+            },
+            "9, 15":{
+                "outcome1":"\"guar_white_unique\"->disable"
+            },
+            "-9, 2":{
+                "outcome1":"\"netch_bull_dead\"->disable"
+            },
+            "-9, 4":{
+                "outcome1":"\"ex_de_scaffold_03a_boe\"->disable",
+                "outcome2":"\"duma gro-lag2\"->disable",
+                "outcome3":"\"ex_de_scaffold_02_boe\"->disable",
+                "outcome4":"\"ex_de_scaffold_03_boe\"->disable",
+                "outcome5":"\"misc_com_bucket_boe_uni\"->disable",
+                "outcome6":"\"ex_dae_r_platform_01_boe\"->disable",
+                "outcome7":"\"ex_de_scaffold_01a_boe\"->disable",
+                "outcome8":"\"dumburz gro-bulfish\"->disable",
+                "outcome9":"\"misc_com_bucket_boe_unib\"->disable",
+                "outcome10":"\"ex_dae_boethiah_fixed\"->disable",
+                "outcome11":"\"ex_de_scaffold_01_boe\"->disable",
+                "outcome12":"\"lazgar gra-durog\"->disable",
+                "outcome13":"\"ex_de_scaffold_02b_boe\"->disable",
+                "outcome14":"\"shulonk gro-azorku\"->disable",
+                "outcome15":"\"misc_com_bucket_boe_unia\"->disable",
+                "outcome16":"\"ex_de_scaffold_02c_boe\"->disable",
+                "outcome17":"\"ex_de_scaffold_02a_boe\"->disable",
+                "outcome18":"\"ugdumph gro-lumbuk\"->disable"
+            },
+            "9, -7":{
+                "outcome1":"\"bk_notefromsondaale\"->disable"
+            },
+            "Ald-ruhn, Gindrala Hleran's House":{
+                "outcome1":"\"dreamer_talker02\"->disable"
+            },
+            "Ald-ruhn, Sarethi Manor":{
+                "outcome1":"\"gragus lleran\"->disable",
+                "outcome2":"\"redoran guard sarethi2\"->disable",
+                "outcome3":"\"redoran guard sarethi1\"->disable",
+                "outcome4":"\"arsyn salas\"->disable"
+            },
+            "Ald-ruhn, The Rat In The Pot":{
+                "outcome1":"\"centurion_spider_tga1\"->disable",
+                "outcome2":"\"centurion_spider_tga2\"->disable"
+            },
+            "Balmora, Balyn Omarel's House":{
+                "outcome1":"\"furn_de_p_chair_02_uni2\"->disable",
+                "outcome2":"\"misc_com_wood_knife_uni2\"->disable",
+                "outcome3":"\"balyn omavel-dead\"->disable",
+                "outcome4":"\"misc_com_wood_fork_uni2\"->disable",
+                "outcome5":"\"misc_com_metal_plate_07_uni2\"->disable",
+                "outcome6":"\"misc_com_wood_spoon_01_uni2\"->disable",
+                "outcome7":"\"ingred_bread_01_uni2\"->disable"
+            },
+            "Balmora, Eight Plates":{
+                "outcome1":"\"itermerel\"->disable"
+            },
+            "Bthuand":{
+                "outcome1":"\"spell_breaker_unique\"->disable"
+            },
+            "Cavern of the Incarnate":{
+                "outcome1":"\"ghost_npc_peakstar\"->disable",
+                "outcome2":"\"ghost_npc_ane teria\"->disable",
+                "outcome3":"\"ghost_npc_hort_ledd\"->disable",
+                "outcome4":"\"ghost_npc_conoon chodal\"->disable",
+                "outcome5":"\"ghost_npc_erur-dan\"->disable",
+                "outcome6":"\"ghost_npc_idrenie nerot\"->disable"
+            },
+            "Ghostgate, Tower of Dusk":{
+                "outcome1":"\"wulf\"->disable"
+            },
+            "Gnaar Mok, Nadene Rotheran's Shack":{
+                "outcome1":"\"daren adryn\"->disable"
+            },
+            "Ilunibi, Soul's Rattle":{
+                "outcome1":"\"dagoth gares\"->disable"
+            },
+            "Indarys Manor, Berendas' House":{
+                "outcome1":"\"heniele milielle\"->disable"
+            },
+            "Kora-Dur":{
+                "outcome1":"\"daedroth_menta_unique\"->disable"
+            },
+            "Mamaea, Sanctum of Black Hope":{
+                "outcome1":"\"hannat zainsubani\"->disable"
+            },
+            "Nchurdamz, Interior":{
+                "outcome1":"\"daedroth_fg_nchur\"->disable"
+            },
+            "Rothan Ancestral Tomb":{
+                "outcome1":"\"mathis dalobar\"->disable"
+            },
+            "Sadrith Mora, Dirty Muriel's Cornerclub":{
+                "outcome1":"\"tenyeminwe\"->disable",
+                "outcome2":"\"tenyeminwe\"->natalinus flavonius"
+            },
+            "Sadrith Mora, Tel Naga Great Hall":{
+                "outcome1":"\"galmir\"->disable",
+                "outcome2":"\"nartise arobar\"->disable"
+            },
+            "Sadrith Mora, Telvanni Council House":{
+                "outcome1":"\"enar releth\"->disable"
+            },
+            "Telasero, Lower Level":{
+                "outcome1":"\"sondaale of shimmerene\"->disable"
+            },
+            "Vivec, Arena Storage":{
+                "outcome1":"\"saprius entius\"->disable"
+            },
+            "Vivec, Foreign Quarter Underworks":{
+                "outcome1":"\"dreamer prophet\"->disable"
+            },
+            "Vivec, Hall of Wisdom":{
+                "outcome1":"\"key_private quarters\"->disable"
+            },
+            "Vivec, Hlaalu Prison Cells":{
+                "outcome1":"\"frelene acques\"->disable"
+            },
+            "Vivec, Jeanne: Trader":{
+                "outcome1":"\"dwarven ghost_jeanne_u\"->disable"
+            },
+            "Vivec, Milo's Quarters":{
+                "outcome1":"\"bk_notetoamaya\"->disable"
+            },
+            "Vivec, Ralen Tilvur: Smith":{
+                "outcome1":"\"drarel andus\"->disable"
+            },
+            "Vivec, St. Olms Underworks":{
+                "outcome1":"\"corprus_stalker_danar\"->disable"
+            },
+            "Vivec, Telvanni Enchanter":{
+                "outcome1":"\"bk_clientlist\"->disable",
+                "outcome2":"\"hunger_audenian\"->disable"
+            }
+        }
+    }
+}
