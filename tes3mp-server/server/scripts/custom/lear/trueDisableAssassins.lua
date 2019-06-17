@@ -95,7 +95,7 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
 				end
 				
 				-- Continue with script.
-				if not tableHelper.containsKeyValuePairs(currentPlayer.data.journal, { quest = "tr_dbattack", index = 10 }, true) then
+				if not tableHelper.containsKeyValuePairs(Players[pid].data.journal, { quest = "tr_dbattack", index = 10 }, true) then
 					logicHandler.RunConsoleCommandOnPlayer(pid, "stopscript dbAttackScript")
 					if (Players[pid].data.customVariables.lear.questFixes.dbAttackCheck == nil and Players[pid].data.stats.level >= dbAssassinsConfig.levelRequirement) then
 						tes3mp.MessageBox(pid, -1, color.MsgBox .. "Test.")
