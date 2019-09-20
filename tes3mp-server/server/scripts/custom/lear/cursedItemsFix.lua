@@ -107,7 +107,7 @@ customEventHooks.registerHandler("OnPlayerInventory", function(eventStatus, pid)
 					
 					if itemRefId == "light_com_dae_cursed_candle_10" then
 						logicHandler.RunConsoleCommandOnPlayer(pid, "player->removeitem \"light_com_Dae_cursed_candle_10\", 1")
-						logicHandler.RunConsoleCommandOnPlayer(pid, "player->additem \"Light_Com_Candle_16\", 1")
+						logicHandler.RunConsoleCommandOnPlayer(pid, "player->additem \"light_com_candle_16\", 1")
 					end
 
 					if itemRefId == "misc_dwrv_cursed_coin00" then
