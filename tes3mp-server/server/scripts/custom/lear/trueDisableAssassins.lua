@@ -106,7 +106,7 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
 						if dbAssassinsConfig.spawnChance > 0 then
 							local rolledDie = math.random(0, 100)
 							if rolledDie <= dbAssassinsConfig.spawnChance then -- <= rolledDie then
-								tes3mp.MessageBox(pid, -1, color.MsgBox .. "You are interrupted by a loud noise.")
+								tes3mp.MessageBox(pid, -1, "You are interrupted by a loud noise.")
 								--logicHandler.RunConsoleCommandOnPlayer(pid, "PlaceAtPC \"db_assassin4\" 1 128 1")
 								logicHandler.CreateObjectAtPlayer(pid, "db_assassin4", "spawn")
 								logicHandler.RunConsoleCommandOnPlayer(pid, "Journal TR_DBAttack 10")
