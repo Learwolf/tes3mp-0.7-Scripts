@@ -3,7 +3,7 @@ SCRIPT:
 	Creature Merchants Restock Gold
 
 VERSION:
-	- 1.00
+	- 1.01
 	
 REQUIREMENTS:
 	TES3MP 0.7 Alpha build that supports customEventHooks.
@@ -28,16 +28,10 @@ DESCRIPTION:
 	them again.
 ]]
 
+local configCM = {}
 
-local config = {}
-
-config.merchantCell = "mark's vampire test cell" -- This should be a cell that's inaccessible to players.
-config.merchantLocation = {posX = 0, posY = 0, posZ = 0, rotX = 0, rotY = 0, rotZ = 0} -- Recommended not to touch this.
-
-config.restockMudcrab = true -- If true, Mudcrab Merchant restocks gold. If false, Mudcrab Merchant does not.
-config.restockCreeper = true -- If true, Creeper restocks gold. If false, Creeper does not.
-
-
+configCM.merchantCell = "mark's vampire test cell" -- This should be a cell that's inaccessible to players.
+configCM.merchantLocation = {posX = 0, posY = 0, posZ = 0, rotX = 0, rotY = 0, rotZ = 0} -- Recommended not to touch this.
 
 --==----==----==----==----==--
 --  Don't Touch:
@@ -68,18 +62,20 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
 		local objectRefId = object.refId
 
 -- Mudcrab Merchant - Talk to again for respawning gold.
-		if config.restockMudcrab and objectRefId == "mudcrab_unique" then
+		if objectRefId == "mudcrab_unique" then
 			LoadedCells[cellDescription]:SaveActorStatsDynamic()
-			if cellDescription == nil then isValid = false return end
-			if objectUniqueIndex == nil then isValid = false return end
+			if cellDescription == nil or objectUniqueIndex == nil then isValid = false return end
 			
 			local npcStats = LoadedCells[cellDescription].data.objectData[objectUniqueIndex].stats
 
 			if npcStats == nil or npcStats.healthCurrent > 0 then
+			
+				local merchantCell = configCM.merchantCell
 				
-				if LoadedCells[config.merchantCell] == nil then
-					logicHandler.LoadCell(config.merchantCell)
+				if LoadedCells[merchantCell] == nil then
+					logicHandler.LoadCell(merchantCell)
 				end
+				
 				
 				local merchantPid = pid
 	
@@ -87,44 +83,45 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
 				local merchantMpNum = "999999971" .. string.byte(logicHandler.GetChatName(merchantPid)) 
 				local merchantUniqueIndex = 0 .. "-" .. merchantMpNum
 				
-				LoadedCells[config.merchantCell]:DeleteObjectData(merchantUniqueIndex)
-				logicHandler.DeleteObjectForEveryone(config.merchantCell, merchantUniqueIndex)
-				logicHandler.DeleteObject(pid, config.merchantCell, merchantUniqueIndex, forEveryone)
+				LoadedCells[merchantCell]:DeleteObjectData(merchantUniqueIndex)
+				logicHandler.DeleteObjectForEveryone(merchantCell, merchantUniqueIndex)
+				logicHandler.DeleteObject(pid, merchantCell, merchantUniqueIndex, forEveryone)
 				
-				LoadedCells[config.merchantCell]:InitializeObjectData(merchantUniqueIndex, merchantRefId)
+				LoadedCells[merchantCell]:InitializeObjectData(merchantUniqueIndex, merchantRefId)
 				
-				LoadedCells[config.merchantCell].data.objectData[merchantUniqueIndex].location = config.merchantLocation
+				local merchantLocation = configCM.merchantLocation
+				LoadedCells[merchantCell].data.objectData[merchantUniqueIndex].location = merchantLocation
 				
-				table.insert(LoadedCells[config.merchantCell].data.packets.actorList, merchantUniqueIndex)
+				table.insert(LoadedCells[merchantCell].data.packets.actorList, merchantUniqueIndex)
 				
 				local objectData = {}
 				objectData.refId = merchantRefId
 				objectData.goldValue = -1
-				objectData.location = config.merchantLocation
+				objectData.location = merchantLocation
 				packetBuilder.AddObjectPlace(merchantUniqueIndex, objectData)
 				tes3mp.SendObjectPlace(false, false)
 
-				logicHandler.ActivateObjectForPlayer(pid, config.merchantCell, merchantUniqueIndex)
+				logicHandler.ActivateObjectForPlayer(pid, merchantCell, merchantUniqueIndex)
 			
 				isValid = false
 			else
 				isValid = false
 			end
 
+		
 -- Creeper Merchant - Talk to again for respawning gold.
-		elseif config.restockCreeper and objectRefId == "scamp_creeper" then
+		elseif objectRefId == "scamp_creeper" then
 			LoadedCells[cellDescription]:SaveActorStatsDynamic()
 			
-			-- added below in an effort to prevent a crash
-			if cellDescription == nil then isValid = false return end
-			if objectUniqueIndex == nil then isValid = false return end
-			-- end edit above
+			if cellDescription == nil or objectUniqueIndex == nil then isValid = false return end
 			local npcStats = LoadedCells[cellDescription].data.objectData[objectUniqueIndex].stats
 
 			if npcStats == nil or npcStats.healthCurrent > 0 then
+			
+				local merchantCell = configCM.merchantCell
 				
-				if LoadedCells[config.merchantCell] == nil then
-					logicHandler.LoadCell(config.merchantCell)
+				if LoadedCells[merchantCell] == nil then
+					logicHandler.LoadCell(merchantCell)
 				end
 				
 				
@@ -134,33 +131,35 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
 				local merchantMpNum = "999999972" .. string.byte(logicHandler.GetChatName(merchantPid)) 
 				local merchantUniqueIndex = 0 .. "-" .. merchantMpNum
 				
-				LoadedCells[config.merchantCell]:DeleteObjectData(merchantUniqueIndex)
-				logicHandler.DeleteObjectForEveryone(config.merchantCell, merchantUniqueIndex)
-				logicHandler.DeleteObject(pid, config.merchantCell, merchantUniqueIndex, forEveryone)
+				LoadedCells[merchantCell]:DeleteObjectData(merchantUniqueIndex)
+				logicHandler.DeleteObjectForEveryone(merchantCell, merchantUniqueIndex)
+				logicHandler.DeleteObject(pid, merchantCell, merchantUniqueIndex, forEveryone)
 				
-				LoadedCells[config.merchantCell]:InitializeObjectData(merchantUniqueIndex, merchantRefId)
+				LoadedCells[merchantCell]:InitializeObjectData(merchantUniqueIndex, merchantRefId)
 				
-				LoadedCells[config.merchantCell].data.objectData[merchantUniqueIndex].location = config.merchantLocation
+				local merchantLocation = configCM.merchantLocation
+				LoadedCells[merchantCell].data.objectData[merchantUniqueIndex].location = merchantLocation
 				
-				table.insert(LoadedCells[config.merchantCell].data.packets.actorList, merchantUniqueIndex)
+				table.insert(LoadedCells[merchantCell].data.packets.actorList, merchantUniqueIndex)
 				
 				local objectData = {}
 				objectData.refId = merchantRefId
 				objectData.goldValue = -1
-				objectData.location = config.merchantLocation
+				objectData.location = merchantLocation
 				packetBuilder.AddObjectPlace(merchantUniqueIndex, objectData)
 				tes3mp.SendObjectPlace(false, false)
 
-				logicHandler.ActivateObjectForPlayer(pid, config.merchantCell, merchantUniqueIndex)
+				logicHandler.ActivateObjectForPlayer(pid, merchantCell, merchantUniqueIndex)
 			
 				isValid = false
 			else
 				isValid = false
-			end
+			end		
 		end
+
+	-- End New Additions
+	eventStatus.validDefaultHandler = isValid
+    return eventStatus
 
 	end
 end)
-
-	
-
