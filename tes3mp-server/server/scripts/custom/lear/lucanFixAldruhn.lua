@@ -17,7 +17,7 @@ local Methods = {}
 
 
 Methods.StopLucanOstoriusScript = function(pid)
-	logicHandler.RunConsoleCommandOnPlayer(pid, "lucan_scriptholder-> setdelete 1")
+	logicHandler.DeleteObjectForPlayer(pid, "-2, 6", "482620-0")
 	if Players[pid].data.customVariables.lear == nil then
 		Players[pid].data.customVariables.lear = {}
 	end
