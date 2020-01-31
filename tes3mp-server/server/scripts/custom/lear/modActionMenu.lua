@@ -1461,7 +1461,6 @@ customCommandHooks.registerCommand("modmenu", function(pid, cmd)
 		modMenuOrigin(pid)
 	end
 end)
-customCommandHooks.setRankRequirment("ranktest", 2) --most be atleast rank 2
 
 -- /mm
 customCommandHooks.registerCommand("mm", function(pid, cmd)
