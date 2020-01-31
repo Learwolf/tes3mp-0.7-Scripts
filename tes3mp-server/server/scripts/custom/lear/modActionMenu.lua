@@ -3,13 +3,22 @@ Script:
 	Moderator Action Menu
 	
 Version:
-	1.00
+	1.01
 	
 For TES3MP Version:
 	Alpha 0.7
 	
 Created by:
 	Learwolf
+	
+Version History:
+	1.01 - Date: 1/31/2020
+		* Fixed issue with staff rank config settings.
+		* Added some padding for /invis and /run commands speed boost.
+		* HEAL will no longer kill the target. (Whoops, lol)
+	
+	1.00 - Date: (Uncertain)
+		Initial release
 	
 --------------------------------------------------------------------------------------------------------
 How To Install:
@@ -19,7 +28,7 @@ How To Install:
 	Next, back track one folder to the "tes3mp-server/server/scripts" folder and open with a text editor:
 		customScripts.lua
 	At the very bottom of this list, add the following line:
-		require("custom.menu.modActionMenu")
+		require("custom.modActionMenu")
 	Save, launch your server and you're good to go.
 	
 --------------------------------------------------------------------------------------------------------
@@ -91,6 +100,13 @@ config.ToggleBorder = 2 -- Staff rank required to use the Toggle Border console 
 config.ResetKillCount = 1 -- Staff rank required to reset the servers world kill count. (Fixes some quest issues from dead NPCs.)
 
 
+
+-- The below adds padding for boosting your speed too high via the /invis and /run commands.
+config.ServerSpeedCap = config.maxSpeedValue or 365 -- This should be whatever your config.lua files maxSpeedValue is.
+config.SuperRunSpeed = config.ServerSpeedCap - 215 -- Default amount: 150
+config.InvisRunSpeed = config.ServerSpeedCap - 115 -- Default amount: 250
+
+
 -- Don't touch the next set of numbers.
 config.moderatorActionMenuOriginGUI = 07252020 -- main menu origin
 config.moderatorActionMenuAvatarGUI = 07252021 -- avatar menu
@@ -128,8 +144,8 @@ local function createRecord(request)
 				skill = -1,
 				rangeType = 0,
 				area = 0,
-				magnitudeMax = 150,
-				magnitudeMin = 150
+				magnitudeMax = config.SuperRunSpeed,
+				magnitudeMin = config.SuperRunSpeed
 			}}
 		}
 		recordStore:Save()
@@ -145,8 +161,8 @@ local function createRecord(request)
 				skill = -1,
 				rangeType = 0,
 				area = 0,
-				magnitudeMax = 350,
-				magnitudeMin = 350
+				magnitudeMax = config.InvisRunSpeed,
+				magnitudeMin = config.InvisRunSpeed
 			}}
 		}
 		recordStore:Save()
@@ -259,7 +275,7 @@ local function funcHEAL(pid, target)
 	local targetName = logicHandler.GetChatName(target)
 	
 	if tes3mp.GetHealthCurrent(target) < tes3mp.GetHealthBase(target) then
-		tes3mp.SetHealthCurrent(target, 0) 
+		tes3mp.SetHealthCurrent(target, tes3mp.GetHealthBase(target)) 
 		tes3mp.SendStatsDynamic(target)
 		
 		local modMessage = config.MsgBoxColor .. "You used "..color.Green.."Lifetouch "..config.MsgBoxColor.."on " .. color.Yellow .. logicHandler.GetChatName(target) .. config.MsgBoxColor.. ".\n"
@@ -1394,14 +1410,7 @@ customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui
 		end
 	
 	
-	
-	
-	
-	
 	end
-		
-		
-		
 	
 end)
 
@@ -1447,15 +1456,16 @@ end)
 
 -- /modmenu
 customCommandHooks.registerCommand("modmenu", function(pid, cmd)
-	if Players[pid].data.settings.staffRank > config.ModMenuRank then
+	if Players[pid].data.settings.staffRank >= config.ModMenuRank then
 		Players[pid].data.customVariables.modMenuLoc = nil
 		modMenuOrigin(pid)
 	end
 end)
+customCommandHooks.setRankRequirment("ranktest", 2) --most be atleast rank 2
 
 -- /mm
 customCommandHooks.registerCommand("mm", function(pid, cmd)
-	if Players[pid].data.settings.staffRank > config.ModMenuRank then
+	if Players[pid].data.settings.staffRank >= config.ModMenuRank then
 		Players[pid].data.customVariables.modMenuLoc = nil
 		modMenuOrigin(pid)
 	end
@@ -1463,42 +1473,42 @@ end)
 
 -- /invis
 customCommandHooks.registerCommand("invis", function(pid, cmd)
-	if Players[pid].data.settings.staffRank > config.InvisRank then
+	if Players[pid].data.settings.staffRank >= config.InvisRank then
 		funcToggleInvis(pid)
 	end
 end)
 
 -- /safemode
 customCommandHooks.registerCommand("safemode", function(pid, cmd)
-	if Players[pid].data.settings.staffRank > config.SafeMode then
+	if Players[pid].data.settings.staffRank >= config.SafeMode then
 		funcSafeMode(pid, pid)
 	end
 end)
 
 -- /safe
 customCommandHooks.registerCommand("safe", function(pid, cmd)
-	if Players[pid].data.settings.staffRank > config.SafeMode then
+	if Players[pid].data.settings.staffRank >= config.SafeMode then
 		funcSafeMode(pid, pid)
 	end
 end)
 
 -- /runspeed
 customCommandHooks.registerCommand("runspeed", function(pid, cmd)
-	if Players[pid].data.settings.staffRank > config.SuperRunRank then
+	if Players[pid].data.settings.staffRank >= config.SuperRunRank then
 		funcRunSpeed(pid)
 	end
 end)
 
 -- /run
 customCommandHooks.registerCommand("run", function(pid, cmd)
-	if Players[pid].data.settings.staffRank > config.SuperRunRank then
+	if Players[pid].data.settings.staffRank >= config.SuperRunRank then
 		funcRunSpeed(pid)
 	end
 end)
 
 -- /goto PID
 customCommandHooks.registerCommand("goto", function(pid, cmd)
-	if Players[pid].data.settings.staffRank > config.GoToRank then
+	if Players[pid].data.settings.staffRank >= config.GoToRank then
 		local target = tonumber(cmd[2])
 		if target == nil then
 			tes3mp.SendMessage(pid, color.Red .. "Input a PID to go to.\n")
