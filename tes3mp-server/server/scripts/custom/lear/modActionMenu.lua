@@ -3,7 +3,7 @@ Script:
 	Moderator Action Menu
 	
 Version:
-	1.01
+	1.02
 	
 For TES3MP Version:
 	Alpha 0.7
@@ -12,13 +12,18 @@ Created by:
 	Learwolf
 	
 Version History:
+	1.02 - Date: 4/21/2020
+		* Fixed some stuff related to GoTo functions.
+		* Added config.GoToLocationRank for staff rank requirements to other goto functions.
+		* Updated the method of which items are added to player inventories.
+		
 	1.01 - Date: 1/31/2020
 		* Fixed issue with staff rank config settings.
 		* Added some padding for /invis and /run commands speed boost.
 		* HEAL will no longer kill the target. (Whoops, lol)
 	
-	1.00 - Date: (Uncertain)
-		Initial release
+	1.00 - Date: 11/2/2019
+		* Initial public release.
 	
 --------------------------------------------------------------------------------------------------------
 How To Install:
@@ -70,9 +75,6 @@ Disclaimer:
 		to private message me the request.
 	
 --------------------------------------------------------------------------------------------------------
-Version History:
-	11/2/2019 - Version 1.00
-		Open public release.
 
 ]]
 
@@ -91,6 +93,7 @@ config.RootRank = 1 -- Staff rank to toggle freezing players in place.
 config.SuperRunRank = 2 -- Staff rank in order to have super speed.
 config.SafeMode = 2 -- Staff rank to enable console TGM.
 config.GoToRank = 1 -- Staff rank to use the GoTo command (warp to player)
+config.GoToLocationRank = 1 -- Staff rank to use the GoTo command (warp to location/xyz/etc.)
 config.SummonItemRank = 2 -- Staff rank required to give self any item.
 config.GiveItemRank = 2 -- Staff rank required to be able to give anyone any item.
 config.BuffPC = 2 -- Staff rank required to set any players level to any number.
@@ -241,8 +244,6 @@ local function playerIDOnline(pid, checkName)
 	
     return valid
 end
-
---
 
 -- FUNCTIONS
 -- KILL Player Function
@@ -496,15 +497,44 @@ end
 
 -- Give Item Function
 local function funcGiveItem(pid, target, refId, count)
+	
+	if refId == nil then return end
+	if count == nil then count = 1 end
+	if soul == nil then soul = "" end
+	if charge == nil then charge = -1 end
+	if enchantmentCharge == nil then enchantmentCharge = -1 end
+	
+	if refId == "gold_005" or refId == "gold_010" or refId == "gold_025" or refId == "gold_100" then
+		refId = "gold_001"
+	end
+	
+	if logicHandler.IsGeneratedRecord(refId) then
+		local cellDescription = tes3mp.GetCell(target)
+        local cell = LoadedCells[cellDescription]
+		local recordType = logicHandler.GetRecordTypeByRecordId(refId)
+		if RecordStores[recordType] ~= nil then
+			local recordStore = RecordStores[recordType]
+			for _, visitorPid in pairs(cell.visitors) do
+				recordStore:LoadGeneratedRecords(visitorPid, recordStore.data.generatedRecords, {refId})
+			end
+		end
+	end
+	
+	tes3mp.ClearInventoryChanges(target)
+	tes3mp.SetInventoryChangesAction(target, enumerations.inventory.ADD)
+	tes3mp.AddItemChange(target, refId, count, charge, enchantmentCharge, soul)
+	tes3mp.SendInventoryChanges(target)
+	Players[target]:SaveInventory()
+	
 	local userName = logicHandler.GetChatName(pid)
-	local targetName = logicHandler.GetChatName(target)
+	local targetName = logicHandler.GetChatName(target)	
 	
 	message = color.Yellow..targetName..config.MsgBoxColor.." has been given "
 	message = message..color.Yellow..refId..config.MsgBoxColor.." x"..count..".\n"
-	logicHandler.RunConsoleCommandOnPlayer(target, "player->additem \"" .. refId .. "\" " .. count)
 	tes3mp.SendMessage(pid, message, false)
 	
 	tes3mp.LogMessage(enumerations.log.INFO, "[ModAction]: \"".. userName .. "\" gave \"" .. targetName .. "\" " .. count .. " \""..refId.."\"")
+		
 end
 
 -- Run Console Command Function
@@ -922,7 +952,7 @@ end
 modMenuSelf = function(pid)
 	
 	local message = color.Orange.."MODERATOR ACTION MENU\n\n"..config.MsgBoxColor.."Render Commands to use on self:\n"
-	tes3mp.CustomMessageBox(pid, config.moderatorActionMenuSelfGUI, message, "KILL;HEAL;Safe Mode;Toggle Invis;Summon Item;Change Sprite;Revert Sprite;DISPLAY POS;Toggle NPC;Back;Exit")
+	tes3mp.CustomMessageBox(pid, config.moderatorActionMenuSelfGUI, message, "KILL;HEAL;Safe Mode;Toggle Invis;Summon Item;Change Sprite;Revert Sprite;DISPLAY POS;Back;Exit")
 	
 end
 
@@ -1230,9 +1260,6 @@ customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui
 			elseif tonumber(data) == 7 then -- Display where player is
 				local target = pid
 				funcWhereIsPlayer(pid, target)
-			elseif tonumber(data) == 8 then -- Toggle NPC
-				funcLackAccess(pid)
-				modMenuSelf(pid)
 			elseif tonumber(data) == 9 then -- Back
 				modMenuAvatar(pid)
 			elseif tonumber(data) == 10 then -- Exit
@@ -1260,7 +1287,6 @@ customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui
 				Players[pid].data.customVariables.modMenuLoc = "Goto Zone"
 				modEnterGotoZone(pid) 
 			elseif tonumber(data) == 1 then -- Goto Location
-				funcLackAccess(pid)
 				modMenuNavigation(pid)
 				--modEnterGotoLocationCell(pid) -- Enter Location (Cell X Y Z)
 			elseif tonumber(data) == 2 then -- Goto Player
@@ -1268,7 +1294,6 @@ customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui
 				modEnterPlayerName(pid) 
 			elseif tonumber(data) == 3 then -- RUN SPEED
 				funcRunSpeed(pid)
-				--modMenuNavigation(pid)
 			elseif tonumber(data) == 4 then -- Back
 				modMenuOrigin(pid)
 			elseif tonumber(data) == 5 then -- exit
@@ -1285,15 +1310,19 @@ customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui
 		if data == nil or data == "" or data == " " then
 			return
 		else
-			if type(tonumber(data)) == "number" then
-				local message = color.Yellow..data..config.MsgBoxColor.." is not a cell.\n"
-				tes3mp.SendMessage(pid, message, false)
-				return
+			if Players[pid].data.settings.staffRank >= config.GoToLocationRank then
+				if type(tonumber(data)) == "number" then
+					local message = color.Yellow..data..config.MsgBoxColor.." is not a cell.\n"
+					tes3mp.SendMessage(pid, message, false)
+					return
+				end
+				
+				funcGotoZone(pid, data) -- Goto Zone / COC Cell Name
+				--Players[pid].data.customVariables.modMenuCell = tostring(data)
+				--modEnterGotoLocationXYZ(pid)
+			else
+				funcLackAccess(pid)
 			end
-			
-			funcGotoZone(pid, data) -- Goto Zone / COC Cell Name
-			--Players[pid].data.customVariables.modMenuCell = tostring(data)
-			--modEnterGotoLocationXYZ(pid)
 		end
 	
 	-- Goto Location Cell
@@ -1302,14 +1331,18 @@ customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui
 		if data == nil or data == "" or data == " " then
 			return
 		else
-			if type(tonumber(data)) == "number" then
-				local message = color.Yellow..data..config.MsgBoxColor.." is not a cell.\n"
-				tes3mp.SendMessage(pid, message, false)
-				return
+			if Players[pid].data.settings.staffRank >= config.GoToLocationRank then
+				if type(tonumber(data)) == "number" then
+					local message = color.Yellow..data..config.MsgBoxColor.." is not a cell.\n"
+					tes3mp.SendMessage(pid, message, false)
+					return
+				end
+				
+				Players[pid].data.customVariables.modMenuCell = tostring(data)
+				modEnterGotoLocationXYZ(pid)
+			else
+				funcLackAccess(pid)
 			end
-			
-			Players[pid].data.customVariables.modMenuCell = tostring(data)
-			modEnterGotoLocationXYZ(pid)
 		end
 			
 	-- Goto Location X Y Z
@@ -1323,20 +1356,23 @@ customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui
 				-- tes3mp.SendMessage(pid, message, false)
 				-- return
 			-- end
-			
-			local tCell = Players[pid].data.customVariables.modMenuCell
-			Players[pid].data.customVariables.modMenuCell = nil
-			
-			local tPos = tonumber(data)
-			
-			local trotX = tes3mp.GetRotX(pid) 
-			local trotZ = tes3mp.GetRotZ(pid)
-			
-			tes3mp.SetCell(pid, tCell)
-			tes3mp.SendCell(pid)
-			tes3mp.SetPos(pid, tpos)
-			tes3mp.SetRot(pid, trotX, trotZ)
-			tes3mp.SendPos(pid)
+			if Players[pid].data.settings.staffRank >= config.GoToLocationRank then
+				local tCell = Players[pid].data.customVariables.modMenuCell
+				Players[pid].data.customVariables.modMenuCell = nil
+				
+				local tPos = tonumber(data)
+				
+				local trotX = tes3mp.GetRotX(pid) 
+				local trotZ = tes3mp.GetRotZ(pid)
+				
+				tes3mp.SetCell(pid, tCell)
+				tes3mp.SendCell(pid)
+				tes3mp.SetPos(pid, tpos)
+				tes3mp.SetRot(pid, trotX, trotZ)
+				tes3mp.SendPos(pid)
+			else
+				funcLackAccess(pid)
+			end
 			
 		end
 		
@@ -1354,7 +1390,7 @@ customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui
 	
 	-- Render
 	elseif idGui == config.moderatorActionMenuRenderGUI then
-	
+		
 		if Players[pid].data.settings.staffRank > 0 then
 			if tonumber(data) == 0 then -- Toggle Borders
 				if Players[pid].data.settings.staffRank < config.ToggleBorder  then
