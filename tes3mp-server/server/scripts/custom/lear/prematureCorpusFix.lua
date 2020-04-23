@@ -1,6 +1,6 @@
 --[[
 Dagoth Gares Premature Corprus Fix
-	version 1.00
+	version 1.01
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 This script will prevent Dagoth Gares from giving players Corprus unless they are on the correct quest to do so.
@@ -14,39 +14,26 @@ simply add one and place this script within.
 Then, in the server/scripts folder, add the following line of text to the bottom of this page:
 require("custom.lear.prematureCorpusFix")
 
-Lastly, you MUST edit Dagoth Gares to not have his default script attached to him. The way to do this, is by going to your 
-tes3mp-server server/data/recordstore folders creature.json file and copying the following line of text:
-
-"dagoth gares":{"baseId":"dagoth gares","script":""}
-
-(Yes, quotations and all.) And adding it into the permanentRecords of your creature.json
-
-If you do not have any permanentRecords already, then it should look like this afterwards:
-
-  "permanentRecords":{
-    "dagoth gares":{
-	  "baseId":"dagoth gares",
-	  "script":""
-	}
-  }
-  
-However, if you DO have other permanent records, it should look something like this:
-
-  "permanentRecords":{
-    "dagoth gares":{
-	  "baseId":"dagoth gares",
-	  "script":""
-	},
-	"someOtherRecord":{
-      "name":"blahBlahBlah",
-	  "level":12
-    },
-  }
-
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 DO NOT EDIT BEYOND THIS, UNLESS YOU KNOW WHAT YOU'RE DOING.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ]]
+
+local function updateDagothGaresRecord()
+
+	local recordStore = RecordStores["npc"]
+	recordStore.data.permanentRecords["dagoth gares"] = {
+		baseId = "dagoth gares",
+		script = ""
+	}
+	recordStore:Save()
+
+end
+
+customEventHooks.registerHandler("OnServerPostInit", function(eventStatus)
+	updateDagothGaresRecord()
+end)
+
 
 local split = function(s, delimiter)
     result = {};
