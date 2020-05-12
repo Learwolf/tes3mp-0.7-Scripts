@@ -18,7 +18,7 @@ INSTALLATION:
 		folder with a text editor such a notepad.
 		
 	4) At the bottom of your "customScripts.lua" you just opened, add the following line of code:
-		require("custom.lear.creatureMerchantsRestockGold.lua")
+		require("custom.lear.creatureMerchantRestockGold.lua")
 		
 	5) Save, exit and launch your server.
 
