@@ -189,7 +189,7 @@ customEventHooks.registerHandler("OnPlayerInventory", function(eventStatus, pid)
 					
 					if itemRefId == "ingred_dae_cursed_ruby_01" then
 						removeInventoryItem(pid, "ingred_dae_cursed_ruby_01", 1)
-						addInventoryItem(pid, "ingred_ruby_01", 1))
+						addInventoryItem(pid, "ingred_ruby_01", 1)
 					end
 					
 					if itemRefId == "light_com_dae_cursed_candle_10" then
