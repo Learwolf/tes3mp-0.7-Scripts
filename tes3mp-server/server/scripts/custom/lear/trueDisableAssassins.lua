@@ -77,8 +77,7 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
 	local isValid = eventStatus.validDefaultHandler
 
     for n,object in pairs(objects) do
-
-		local index = n-1
+	
         local temp = split(object["uniqueIndex"], "-")
         local RefNum = temp[1]
         local MpNum = temp[2]
