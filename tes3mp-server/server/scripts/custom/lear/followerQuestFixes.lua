@@ -9,7 +9,7 @@ To instal, simply drag this file into your
 folder, then open your customScripts.lua found in your
 	tes3mp-server/server/scripts/
 folder. Add the following line to your customScripts.lua file:close
-	require("custom.followerQuestFixes")
+	require("custom.followersQuestFixes")
 save, close the file and you're done.
 
 ----------------------------------------------------------------------
