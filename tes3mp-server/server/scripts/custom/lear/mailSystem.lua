@@ -42,7 +42,6 @@ config.TopMessageInfo = color.Orange  -- top message info of Mail System UI
 config.tldrColor = color.White  -- color of the "..." at the end of messages that bypass the message character limit
 
 config.unreadMailMessage = "You have unread mail."	-- The message a player sees when receiving unread mail.
-config.unreadNotificationMessage = "You have unread notifications."  -- The message a player sees when receiving unread notification.
 
 config.ColorMsgBox = "#AB8C53" -- Color of general text.
 config.ColorPreview = color.White -- Color of mail names/subject/body text.
