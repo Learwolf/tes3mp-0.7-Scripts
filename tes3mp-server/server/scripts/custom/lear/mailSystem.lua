@@ -2,6 +2,7 @@
 --[[
 
 	Mail System
+	version 1.01
 	by Learwolf
 	
 	**IMPORTANT!**
@@ -22,7 +23,11 @@
 	
 	VERSION HISTORY:
 	
-	5/30/2020 - Initial release.
+	6/1/2020 - 1.01
+		- No longer create mail files when a player logs in. This should be helpful in conserving space on populated servers.
+
+	5/30/2020 - 1.00
+		- Initial release.
 	
 	
 --]]
@@ -134,7 +139,15 @@ local checkIfYouveGotMail = function(pid)
 	
 	local name = string.lower(Players[pid].accountName)
 	
-	if checkIfPlayerExists(pid, name) then
+	local accountName = fileHelper.fixFilename(name)
+	
+	local player = {}
+	player.accountFile = tes3mp.GetCaseInsensitiveFilename(tes3mp.GetModDir() .. "/player/", accountName .. ".json")
+	player.mailbox = tes3mp.GetCaseInsensitiveFilename(tes3mp.GetModDir() .. "/custom/mail/", accountName .. ".json")
+	
+	if player.accountFile == "invalid" or player.mailbox == "invalid" then
+        	return
+	else
 		
 		local accountName = fileHelper.fixFilename(name)
 		local mailbox = jsonInterface.load("custom/mail/"..accountName..".json")
