@@ -770,7 +770,7 @@ local checkForMannequinRefIds = function(pid, cellDescription)
 				
 				if tableHelper.containsValue(config.mannequinRefIDs, targetRefId) then
 					local consoleCommand = "addspell npc_buffing_mannequin_buff"
-					logicHandler.RunConsoleCommandOnObject(pid, consoleCommand, cellDescription, objIndex, true)
+					logicHandler.RunConsoleCommandOnObject(pid, consoleCommand, cellDescription, objIndex, false)
 					LoadedCells[cellDescription]:LoadActorEquipment(pid, LoadedCells[cellDescription].data.objectData, {objIndex})
 				end
 				
