@@ -159,7 +159,7 @@ customEventHooks.registerHandler("OnPlayerInventory", function(eventStatus, pid)
 			
 			local iCount = tes3mp.GetInventoryItemCount(pid, index)
 			local iCharge = tes3mp.GetInventoryItemCharge(pid, index)
-			local iEnchantmentCharge = tes3mp.GetInventoryItemEnchantmentCharge(pid, index),
+			local iEnchantmentCharge = tes3mp.GetInventoryItemEnchantmentCharge(pid, index)
 			local iSoul = tes3mp.GetInventoryItemSoul(pid, index)
 
 			if action == enumerations.inventory.SET or action == enumerations.inventory.ADD then
