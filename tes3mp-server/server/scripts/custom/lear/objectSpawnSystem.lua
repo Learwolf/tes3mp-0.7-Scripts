@@ -99,7 +99,7 @@ customEventHooks.registerHandler("OnServerPostInit", function(eventStatus)
 		Save()
 	end
 	
-	if updatedObjectSpawnDB ~= nil and objectSpawnDB.spawnedObjectLocations ~= nil then
+	if updatedObjectSpawnDB ~= nil and updatedObjectSpawnDB.spawnedObjectLocations ~= nil then
 		objectSpawnDB.spawnedObjectLocations = updatedObjectSpawnDB.spawnedObjectLocations
 		Save()
 	end
