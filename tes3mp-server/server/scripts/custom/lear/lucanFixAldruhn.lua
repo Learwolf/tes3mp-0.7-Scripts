@@ -27,12 +27,7 @@ Methods.StopLucanOstoriusScript = function(pid)
 	logicHandler.RunConsoleCommandOnPlayer(pid, "stopscript lucan_ostorius")
 end
 
-customEventHooks.registerHandler("OnPlayerFinishLogin", function(eventStatus, pid)
-	tes3mp.LogMessage(enumerations.log.INFO, "Stopping lucan_ostorius script for " .. Players[pid].name)
-	Methods.StopLucanOstoriusScript(pid)
-end)
-
-customEventHooks.registerHandler("OnPlayerEndCharGen", function(eventStatus, pid)
+customEventHooks.registerHandler("OnPlayerAuthentified", function(eventStatus, pid)
 	tes3mp.LogMessage(enumerations.log.INFO, "Stopping lucan_ostorius script for " .. Players[pid].name)
 	Methods.StopLucanOstoriusScript(pid)
 end)
