@@ -125,4 +125,9 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
     return eventStatus
 end)
 
+customEventHooks.registerHandler("OnPlayerAuthentified", function(eventStatus, pid)
+	logicHandler.RunConsoleCommandOnPlayer(pid, "stopscript dbAttackScript")
+end)
+
+
 return Methods
