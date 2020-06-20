@@ -97,7 +97,7 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
 				if not tableHelper.containsKeyValuePairs(Players[pid].data.journal, { quest = "tr_dbattack", index = 10 }, true) then
 					logicHandler.RunConsoleCommandOnPlayer(pid, "stopscript dbAttackScript")
 					if (Players[pid].data.customVariables.lear.questFixes.dbAttackCheck == nil and Players[pid].data.stats.level >= dbAssassinsConfig.levelRequirement) then
-						tes3mp.MessageBox(pid, -1, color.MsgBox .. "Test.")
+						
 						if dbAssassinsConfig.spawnChance > 100 then	
 							dbAssassinsConfig.spawnChance = 100
 						end
@@ -106,11 +106,9 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
 							local rolledDie = math.random(0, 100)
 							if rolledDie <= dbAssassinsConfig.spawnChance then -- <= rolledDie then
 								tes3mp.MessageBox(pid, -1, "You are interrupted by a loud noise.")
-								--logicHandler.RunConsoleCommandOnPlayer(pid, "PlaceAtPC \"db_assassin4\" 1 128 1")
 								logicHandler.CreateObjectAtPlayer(pid, "db_assassin4", "spawn")
 								logicHandler.RunConsoleCommandOnPlayer(pid, "Journal TR_DBAttack 10")
 								Players[pid].data.customVariables.lear.questFixes.dbAttackCheck = 1
-								--logicHandler.RunConsoleCommandOnPlayer(pid, "Journal TR_DBAttack 20")
 							end
 						else
 							return
