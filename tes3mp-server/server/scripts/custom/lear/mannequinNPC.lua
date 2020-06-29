@@ -346,7 +346,8 @@ local function createRecord()
 		}
 	}
 	
-		
+	recordStore:Save()
+	
 --==----==----==----==----==----==----==----==----==----==----==----==----==--
 	
 	recordStore = RecordStores["npc"]
