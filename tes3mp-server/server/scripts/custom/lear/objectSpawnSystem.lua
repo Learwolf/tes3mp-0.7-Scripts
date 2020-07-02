@@ -272,9 +272,9 @@ local savePlacedObjectsForCell = function(pid)
 	
 	if triggerSave then
 		Save()
-		local msg = color.Yellow.."[Object Spawn System]: "..color.MsgBox..thisCell..color.Green.." saved successfully"..color.MsgBox.."!\n"..
-					"Saved Objects: "..color.White..placeAmount..color.MsgBox.."\nSaved Scales: "..color.White..scaleAmount.."\n"..
-					"Saved Containers: "..color.White..containerAmount..color.MsgBox.."\n"
+		local msg = color.Yellow.."[Object Spawn System]: "..color.Orange..thisCell..color.Green.." saved successfully"..color.Orange.."!\n"..
+					"Saved Objects: "..color.White..placeAmount..color.Orange.."\nSaved Scales: "..color.White..scaleAmount.."\n"..
+					"Saved Containers: "..color.White..containerAmount..color.Orange.."\n"
 		
 		
 		local txt = thisCell.." saved successfully!\nSaved Objects: "..placeAmount.."\nSaved Scales: "..scaleAmount.."\nSaved Container Contents: "..containerAmount
@@ -448,7 +448,7 @@ objectSpawnSystem.AddUniqueIndexToDatabase = function(pid)
 			end
 			
 			Save()
-			tes3mp.SendMessage(pid, color.Yellow.."[Object Spawn System]: "..color.MsgBox.."Unique index "..color.Green.."successfully"..color.MsgBox.." added.\n", false)
+			tes3mp.SendMessage(pid, color.Yellow.."[Object Spawn System]: "..color.Orange.."Unique index "..color.Green.."successfully"..color.Orange.." added.\n", false)
 		else
 			tes3mp.SendMessage(pid, color.Yellow.."[Object Spawn System]: "..color.Error.."An error occurred. Please check the uniqueIndex and your cell then try again.\n", false)
 		end
@@ -464,11 +464,11 @@ objectSpawnSelected = {}
 objectSpawnSelectedScale = {}
 
 objectSpawnSystem.InputUniqueIndexOfObject = function(pid)
-	tes3mp.InputDialog(pid, config.InputUniqueIndexOfObject, color.MsgBox.."Enter Objects Unique Index:", "To enter it into the database.\nEnter \" \" (One space) to cancel.")
+	tes3mp.InputDialog(pid, config.InputUniqueIndexOfObject, color.Orange.."Enter Objects Unique Index:", "To enter it into the database.\nEnter \" \" (One space) to cancel.")
 end
 
 objectSpawnSystem.InputScaleForUniqueIndexOfObject = function(pid)
-	tes3mp.InputDialog(pid, config.InputScaleForUniqueIndexOfObject, color.MsgBox.."Enter Objects Unique Index:", "To enter it into the database.\nEnter \" \" (One space) to cancel.")
+	tes3mp.InputDialog(pid, config.InputScaleForUniqueIndexOfObject, color.Orange.."Enter Objects Unique Index:", "To enter it into the database.\nEnter \" \" (One space) to cancel.")
 end
 
 objectSpawnSystem.UniqueIndexConfirmation = function(pid)
@@ -484,14 +484,14 @@ objectSpawnSystem.UniqueIndexConfirmation = function(pid)
 	end
 	if objectSpawnSelectedScale[pid] == nil then objectSpawnSelectedScale[pid] = PossibleScale end
 	
-	local msg = color.Orange.."Object Spawn System:\n\n"..color.MsgBox..
-		color.MsgBox.."Selected Unique Index:\n"..color.Yellow..
-		objectSpawnSelected[pid].."\n\n"..color.MsgBox..
+	local msg = color.Orange.."Object Spawn System:\n\n"..color.Orange..
+		color.Orange.."Selected Unique Index:\n"..color.Yellow..
+		objectSpawnSelected[pid].."\n\n"..color.Orange..
 		"Your current cell: \n"..color.Green..
-		tes3mp.GetCell(pid).."\n\n"..color.MsgBox..
+		tes3mp.GetCell(pid).."\n\n"..color.Orange..
 		"Unique Indexes Scale: \n"..color.White..
 		objectSpawnSelectedScale[pid].."\n\n"..color.Red..
-		"MAKE SURE YOU ARE IN THE OBJECTS CELL!!!\n\n"..color.MsgBox..
+		"MAKE SURE YOU ARE IN THE OBJECTS CELL!!!\n\n"..color.Orange..
 		"Add this unique index to the database?\n"
 		
 	tes3mp.CustomMessageBox(pid, config.UniqueIndexConfirmation, msg, "No;Yes;Setcale;Exit")
@@ -501,10 +501,10 @@ end
 
 objectSpawnSystem.ObjectSpawnOptionsMenu = function(pid)
 	
-	local msg = color.Orange.."Object Spawn System:\n\n"..color.MsgBox..
-		color.Yellow.."Enter Unique Index "..color.MsgBox.."to save only that index/scale.\n\n"..
-		color.Yellow.."Save Entire Cell "..color.MsgBox.."to save all the custom placed objects in a cell.\n"..
-		color.MsgBox.."("..color.Red.."Warning:"..color.MsgBox.." this will literally save every 0-XXXXXXXX object in the cell!!)\n"
+	local msg = color.Orange.."Object Spawn System:\n\n"..color.Orange..
+		color.Yellow.."Enter Unique Index "..color.Orange.."to save only that index/scale.\n\n"..
+		color.Yellow.."Save Entire Cell "..color.Orange.."to save all the custom placed objects in a cell.\n"..
+		color.Orange.."("..color.Red.."Warning:"..color.Orange.." this will literally save every 0-XXXXXXXX object in the cell!!)\n"
 		
 	tes3mp.CustomMessageBox(pid, config.ObjectSpawnOptionsMenu, msg, "Enter Unique Index;Save Entire Cell;Exit")
 	
@@ -516,9 +516,9 @@ objectSpawnSystem.SaveAllConfirmation = function(pid)
 	local thisCell = tes3mp.GetCell(pid)
 	local objectCount = getPlacedObjectCountForCell(pid)
 	
-	local msg = color.Orange.."Object Spawn System:\n\n"..color.MsgBox..
-		color.Red.."WARNING!\n\n"..color.MsgBox.."You are about to save every custom placed object in this cell:\n"..color.Yellow..thisCell..color.MsgBox..
-		"\n\nThere are "..color.White..objectCount..color.MsgBox.." placed objects in this cell to save.\n\nAre you sure you want to save?\n"
+	local msg = color.Orange.."Object Spawn System:\n\n"..color.Orange..
+		color.Red.."WARNING!\n\n"..color.Orange.."You are about to save every custom placed object in this cell:\n"..color.Yellow..thisCell..color.Orange..
+		"\n\nThere are "..color.White..objectCount..color.Orange.." placed objects in this cell to save.\n\nAre you sure you want to save?\n"
 		
 	tes3mp.CustomMessageBox(pid, config.ObjectSpawnSaveAllConfirm, msg, "Yes, Save;No, Don't Save;Exit")
 
@@ -545,7 +545,7 @@ customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui
         else
 			objectSpawnSelected[pid] = nil
 			objectSpawnSelectedScale[pid] = nil
-			return tes3mp.SendMessage(pid, color.Yellow.."[Object Spawn System]: "..color.MsgBox.."unique index "..color.Yellow.."not"..color.MsgBox.." added.\n", false)
+			return tes3mp.SendMessage(pid, color.Yellow.."[Object Spawn System]: "..color.Orange.."unique index "..color.Yellow.."not"..color.Orange.." added.\n", false)
         end
 		
 	elseif idGui == config.InputScaleForUniqueIndexOfObject then
