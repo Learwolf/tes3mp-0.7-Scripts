@@ -1162,7 +1162,7 @@ customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui
 			end
 			
 			local target = Players[pid].data.customVariables.modMenuTarget
-			local refId = Players[pid].data.customVariables.modMenuRefId
+			local refId = string.lower(Players[pid].data.customVariables.modMenuRefId)
 			local count = data
 			funcGiveItem(pid, target, refId, count)
 		end
