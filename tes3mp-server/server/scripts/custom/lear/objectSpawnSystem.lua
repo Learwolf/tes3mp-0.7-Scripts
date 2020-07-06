@@ -1,9 +1,14 @@
 --[[
 	Object Spawn System
-	   version 1.00
+	   version 1.01
 		by Learwolf
 		
 	Version History:
+		* 1.01 (7/5/2020) - Removed some unecessary code. 
+							Reworked method to place objects.
+							Added option to save container inventory contents. 
+							Added an in-game menu to remove saved objects from the json file.
+							
 		* 1.00 (6/18/2020) - Initial release.
 	
 	Install Instructions:
@@ -51,20 +56,32 @@
 		be around to do it. See the information below regarding:
 			local updatedObjectSpawnDB = jsonInterface.load("custom/updatedSpawnedObjectsDB.json")
 		
+		
+		You can now delete saved objects in-game. (From being loaded again on the next reset. You will still need to delete the object in your current server session.)
+		This can be found in the main menu options, and allows you to individually select the uniqueIndex/refId of saved objects in your current cell.
+		
+		You can toggle on and off the ability to save placed container contents with a config option below.
+			sConfig.saveObjectInventoryContents = true	<- This will result in saving placed items in place containers so they regenerate their loot on the next server reset.
 --]]
 
 
 objectSpawnSystem = {}
 
-local config = {}
+local sConfig = {}
 
-config.staffRankToSaveObjectSpawns = 2 -- This is the only thing you should need to configure. >= this number is the staff rank that can use the /sobj command.
+sConfig.staffRankToSaveObjectSpawns = 2 -- This is the only thing you should need to configure. >= this number is the staff rank that can use the /sobj command.
+sConfig.saveObjectInventoryContents = false -- If true, this will save placed containers inventory contents. If false, it wont.
 
-config.InputUniqueIndexOfObject = 0505072020
-config.UniqueIndexConfirmation = 0505072021
-config.InputScaleForUniqueIndexOfObject = 0505072022
-config.ObjectSpawnOptionsMenu = 0505072023
-config.ObjectSpawnSaveAllConfirm = 0505072024
+
+sConfig.msgBoxColor = "#CAA560" -- Just a font color used for some of the messages.
+sConfig.InputUniqueIndexOfObject = 0505072020
+sConfig.UniqueIndexConfirmation = 0505072021
+sConfig.InputScaleForUniqueIndexOfObject = 0505072022
+sConfig.ObjectSpawnOptionsMenu = 0505072023
+sConfig.ObjectSpawnSaveAllConfirm = 0505072024
+sConfig.ObjectSpawnViewSavedInCell = 0505072025
+sConfig.ObjectSpawnOptionsMenuSelectedObject = 0505072026
+
 
 local objectSpawnDB = jsonInterface.load("custom/spawnedObjectsDB.json")
 
@@ -108,8 +125,6 @@ end)
 
 
 
-
-
 local loadPrintout = function()
 	local textDate = os.date("%m.%d.%y")
 	local file = io.open(tes3mp.GetModDir() .. "/objectsSaved "..textDate..".txt", "a")
@@ -124,10 +139,6 @@ local writePrintout = function(text2Write)
 end
 
 
-
-
-
-cellsAlreadyHandledThisSession = {}
 
 local getPlacedObjectCountForCell = function(pid)
 	
@@ -144,7 +155,6 @@ local getPlacedObjectCountForCell = function(pid)
 	
 	return amount
 end
-
 
 
 -- Save Every Altered Object in the cell:
@@ -217,7 +227,7 @@ local savePlacedObjectsForCell = function(pid)
 					objectSpawnDB.spawnedObjectLocations[thisCell][uniqueIndex].rotZ = oLocation.rotZ
 					
 					-- CONTAINER CHECK:
-					if  LoadedCells[thisCell].data.objectData[uniqueIndex].inventory ~= nil then
+					if sConfig.saveObjectInventoryContents and LoadedCells[thisCell].data.objectData[uniqueIndex].inventory ~= nil then
 						local containerContents = {}
 						
 						for i=1, #LoadedCells[thisCell].data.objectData[uniqueIndex].inventory do
@@ -272,9 +282,9 @@ local savePlacedObjectsForCell = function(pid)
 	
 	if triggerSave then
 		Save()
-		local msg = color.Yellow.."[Object Spawn System]: "..color.Orange..thisCell..color.Green.." saved successfully"..color.Orange.."!\n"..
-					"Saved Objects: "..color.White..placeAmount..color.Orange.."\nSaved Scales: "..color.White..scaleAmount.."\n"..
-					"Saved Containers: "..color.White..containerAmount..color.Orange.."\n"
+		local msg = color.Yellow.."[Object Spawn System]: "..sConfig.msgBoxColor..thisCell..color.Green.." saved successfully"..sConfig.msgBoxColor.."!\n"..
+					"Saved Objects: "..color.White..placeAmount..sConfig.msgBoxColor.."\nSaved Scales: "..color.White..scaleAmount.."\n"..
+					"Saved Containers: "..color.White..containerAmount..sConfig.msgBoxColor.."\n"
 		
 		
 		local txt = thisCell.." saved successfully!\nSaved Objects: "..placeAmount.."\nSaved Scales: "..scaleAmount.."\nSaved Container Contents: "..containerAmount
@@ -290,31 +300,24 @@ end
 
 local function updateScale(cellId, tUniqueIndex, tRefId, bScale)
 	
-	local foundUniqueIndex = tUniqueIndex
-	
 	if LoadedCells[cellId] ~= nil then
 		
 		local objData = LoadedCells[cellId].data.objectData
 		
-		if foundUniqueIndex == nil then
+		if tUniqueIndex == nil then
 			for uId,_data in pairs(objData) do
 				if _data.refId == tRefId then
-					foundUniqueIndex = uId
-						for pid, player in pairs(Players) do
-							if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-								--tes3mp.SendMessage(pid, "Index found: "..uId.."\n", false)
-							end
-						end
+					tUniqueIndex = uId
 					break
 				end
 			end
 		end
 		
-		objData[foundUniqueIndex].scale = bScale
-		table.insert(LoadedCells[cellId].data.packets.scale, foundUniqueIndex)
+		objData[tUniqueIndex].scale = bScale
+		table.insert(LoadedCells[cellId].data.packets.scale, tUniqueIndex)
 		
 		local oData = {refId = tRefId, scale = bScale}
-		packetBuilder.AddObjectScale(foundUniqueIndex, oData)
+		packetBuilder.AddObjectScale(tUniqueIndex, oData)
 		tes3mp.SendObjectScale()
 		
 		LoadedCells[cellId]:Save()
@@ -323,67 +326,58 @@ local function updateScale(cellId, tUniqueIndex, tRefId, bScale)
 
 end
 
-
 objectSpawnSystem.CheckForCellObjectSpawns = function(pid)
 	
+	local pushSave = false
+	
 	for cellId, oCellData in pairs(objectSpawnDB.spawnedObjectLocations) do
-		if LoadedCells[cellId] ~= nil and not tableHelper.containsValue(cellsAlreadyHandledThisSession, cellId) then
+		if LoadedCells[cellId] ~= nil and not LoadedCells[cellId].data.placedObjects then
+			
+			local replacementList = {}
 			
 			for uniqueIndex, _uIndexData in pairs(objectSpawnDB.spawnedObjectLocations[cellId]) do
-				Load()
 				
-				if not tableHelper.containsValue(LoadedCells[cellId].data.packets.place, uniqueIndex) or (LoadedCells[cellId].data.objectData[uniqueIndex] ~= nil and LoadedCells[cellId].data.objectData[uniqueIndex].refId ~= _uIndexData.refId) then
-				--if not tableHelper.containsValue(LoadedCells[cellId].data.packets.place, uniqueIndex) then
-					local oLocation = {
-						posX = _uIndexData.posX,
-						posY = _uIndexData.posY,
-						posZ = _uIndexData.posZ,
-						rotX = _uIndexData.rotX,
-						rotY =  _uIndexData.rotY,--0,
-						rotZ = _uIndexData.rotZ
-					}
-					local oRefId = _uIndexData.refId
-					local scale = 1
-					if _uIndexData.scale ~= nil then
-						scale = _uIndexData.scale
-					end
-					
-					local newUniqueIndex = logicHandler.CreateObjectAtLocation(cellId,oLocation,oRefId,"place")
-					
-					objectSpawnDB.spawnedObjectLocations[cellId][newUniqueIndex] = objectSpawnDB.spawnedObjectLocations[cellId][uniqueIndex]
-					
-					if objectSpawnDB.spawnedObjectLocations[cellId][uniqueIndex].scale ~= nil then
-						local scaleSize = objectSpawnDB.spawnedObjectLocations[cellId][uniqueIndex].scale
-						-- local authPid = LoadedCells[cellId]:GetAuthority()
-						-- local timeAmount = os.time() + 15
-						-- Players[authPid].data.customVariables.temporaryConsoleAllowed = timeAmount
-						-- logicHandler.RunConsoleCommandOnObject(authPid, "setscale "..scaleSize, cellId, newUniqueIndex, false)
-						updateScale(cellId, newUniqueIndex, oRefId, scaleSize)
-					end
-					
-					
-					
-					
-					if objectSpawnDB.spawnedObjectLocations[cellId][uniqueIndex].inventory ~= nil then
-						LoadedCells[cellId].data.objectData[newUniqueIndex].inventory = objectSpawnDB.spawnedObjectLocations[cellId][uniqueIndex].inventory
-						LoadedCells[cellId]:LoadContainers(pid, LoadedCells[cellId].data.objectData, { newUniqueIndex })
-					end
-					
-					
-					
-					
-					objectSpawnDB.spawnedObjectLocations[cellId][uniqueIndex] = nil
-					Save()
+				local oLocation = {
+					posX = _uIndexData.posX,
+					posY = _uIndexData.posY,
+					posZ = _uIndexData.posZ,
+					rotX = _uIndexData.rotX,
+					rotY = _uIndexData.rotY,
+					rotZ = _uIndexData.rotZ
+				}
+				local oRefId = string.lower(_uIndexData.refId)
+				local scale = 1
+				if _uIndexData.scale ~= nil then
+					scale = _uIndexData.scale
 				end
 				
+				local newUniqueIndex = logicHandler.CreateObjectAtLocation(cellId,oLocation,oRefId,"place")
+				
+				replacementList[newUniqueIndex] = objectSpawnDB.spawnedObjectLocations[cellId][uniqueIndex]
+				
+				if objectSpawnDB.spawnedObjectLocations[cellId][uniqueIndex].scale ~= nil then
+					local scaleSize = objectSpawnDB.spawnedObjectLocations[cellId][uniqueIndex].scale
+					updateScale(cellId, newUniqueIndex, oRefId, scaleSize)
+				end
+				
+				if objectSpawnDB.spawnedObjectLocations[cellId][uniqueIndex].inventory ~= nil then
+					LoadedCells[cellId].data.objectData[newUniqueIndex].inventory = objectSpawnDB.spawnedObjectLocations[cellId][uniqueIndex].inventory
+					LoadedCells[cellId]:LoadContainers(pid, LoadedCells[cellId].data.objectData, {newUniqueIndex})
+				end
+				
+				pushSave = true
 				
 			end
 			
+			objectSpawnDB.spawnedObjectLocations[cellId] = replacementList
 			
-			tableHelper.insertValueIfMissing(cellsAlreadyHandledThisSession, cellId)
+			LoadedCells[cellId].data.placedObjects = true
+			LoadedCells[cellId]:Save()
+			
 		end
 	end
-
+	
+	if pushSave then Save() end
 end
 
 
@@ -406,7 +400,6 @@ objectSpawnSystem.AddUniqueIndexToDatabase = function(pid)
 	else
 		if LoadedCells[currentCell].data.objectData[uniqueIndex] ~= nil then
 			local oRefId = LoadedCells[currentCell].data.objectData[uniqueIndex].refId
-			--print(oRefId)
 			
 			if LoadedCells[currentCell].data.objectData[uniqueIndex].location == nil then return tes3mp.SendMessage(pid, color.Yellow.."[Object Spawn System]: "..color.Error.."This unique index does not have a location set or is hidden/deleted.\n", false) end
 		
@@ -433,22 +426,27 @@ objectSpawnSystem.AddUniqueIndexToDatabase = function(pid)
 			objectSpawnDB.spawnedObjectLocations[currentCell][uniqueIndex].rotY = oLocation.rotY
 			objectSpawnDB.spawnedObjectLocations[currentCell][uniqueIndex].rotZ = oLocation.rotZ
 			
-			-- local containerContents
 			
-			-- if  LoadedCells[currentCell].data.objectData[uniqueIndex].inventory ~= nil then
-				-- containerContents = {}
-				-- for i=1, #LoadedCells[currentCell].data.objectData[uniqueIndex].inventory do
-					-- table.insert(containerContents, LoadedCells[currentCell].data.objectData[uniqueIndex].inventory[i])
-				-- end
-				-- objectSpawnDB.spawnedObjectLocations[currentCell][uniqueIndex].inventory = containerContents
-			-- end
+			-- CONTAINER CHECK:
+			if sConfig.saveObjectInventoryContents and LoadedCells[thisCell].data.objectData[uniqueIndex].inventory ~= nil then
+				
+				local containerContents = {}
+				
+				for i=1, #LoadedCells[thisCell].data.objectData[uniqueIndex].inventory do
+					table.insert(containerContents, LoadedCells[thisCell].data.objectData[uniqueIndex].inventory[i])
+				end
+				
+				objectSpawnDB.spawnedObjectLocations[thisCell][uniqueIndex].inventory = containerContents
+			end
+			-- END CONTAINER CHECK.
+			
 			
 			if objectSpawnSelectedScale[pid] ~= nil and objectSpawnSelectedScale[pid] ~= 1 then
 				objectSpawnDB.spawnedObjectLocations[currentCell][uniqueIndex].scale = tonumber(objectSpawnSelectedScale[pid])
 			end
 			
 			Save()
-			tes3mp.SendMessage(pid, color.Yellow.."[Object Spawn System]: "..color.Orange.."Unique index "..color.Green.."successfully"..color.Orange.." added.\n", false)
+			tes3mp.SendMessage(pid, color.Yellow.."[Object Spawn System]: "..sConfig.msgBoxColor.."Unique index "..color.Green.."successfully"..sConfig.msgBoxColor.." added.\n", false)
 		else
 			tes3mp.SendMessage(pid, color.Yellow.."[Object Spawn System]: "..color.Error.."An error occurred. Please check the uniqueIndex and your cell then try again.\n", false)
 		end
@@ -464,11 +462,11 @@ objectSpawnSelected = {}
 objectSpawnSelectedScale = {}
 
 objectSpawnSystem.InputUniqueIndexOfObject = function(pid)
-	tes3mp.InputDialog(pid, config.InputUniqueIndexOfObject, color.Orange.."Enter Objects Unique Index:", "To enter it into the database.\nEnter \" \" (One space) to cancel.")
+	tes3mp.InputDialog(pid, sConfig.InputUniqueIndexOfObject, sConfig.msgBoxColor.."Enter Objects Unique Index:", "To enter it into the database.\nEnter \" \" (One space) to cancel.")
 end
 
 objectSpawnSystem.InputScaleForUniqueIndexOfObject = function(pid)
-	tes3mp.InputDialog(pid, config.InputScaleForUniqueIndexOfObject, color.Orange.."Enter Objects Unique Index:", "To enter it into the database.\nEnter \" \" (One space) to cancel.")
+	tes3mp.InputDialog(pid, sConfig.InputScaleForUniqueIndexOfObject, sConfig.msgBoxColor.."Enter Objects Unique Index:", "To enter it into the database.\nEnter \" \" (One space) to cancel.")
 end
 
 objectSpawnSystem.UniqueIndexConfirmation = function(pid)
@@ -484,29 +482,28 @@ objectSpawnSystem.UniqueIndexConfirmation = function(pid)
 	end
 	if objectSpawnSelectedScale[pid] == nil then objectSpawnSelectedScale[pid] = PossibleScale end
 	
-	local msg = color.Orange.."Object Spawn System:\n\n"..color.Orange..
-		color.Orange.."Selected Unique Index:\n"..color.Yellow..
-		objectSpawnSelected[pid].."\n\n"..color.Orange..
+	local msg = color.Orange.."Object Spawn System:\n\n"..sConfig.msgBoxColor..
+		sConfig.msgBoxColor.."Selected Unique Index:\n"..color.Yellow..
+		objectSpawnSelected[pid].."\n\n"..sConfig.msgBoxColor..
 		"Your current cell: \n"..color.Green..
-		tes3mp.GetCell(pid).."\n\n"..color.Orange..
+		tes3mp.GetCell(pid).."\n\n"..sConfig.msgBoxColor..
 		"Unique Indexes Scale: \n"..color.White..
 		objectSpawnSelectedScale[pid].."\n\n"..color.Red..
-		"MAKE SURE YOU ARE IN THE OBJECTS CELL!!!\n\n"..color.Orange..
+		"MAKE SURE YOU ARE IN THE OBJECTS CELL!!!\n\n"..sConfig.msgBoxColor..
 		"Add this unique index to the database?\n"
 		
-	tes3mp.CustomMessageBox(pid, config.UniqueIndexConfirmation, msg, "No;Yes;Setcale;Exit")
+	tes3mp.CustomMessageBox(pid, sConfig.UniqueIndexConfirmation, msg, "No;Yes;Setcale;Exit")
 	
 end
 
-
 objectSpawnSystem.ObjectSpawnOptionsMenu = function(pid)
 	
-	local msg = color.Orange.."Object Spawn System:\n\n"..color.Orange..
-		color.Yellow.."Enter Unique Index "..color.Orange.."to save only that index/scale.\n\n"..
-		color.Yellow.."Save Entire Cell "..color.Orange.."to save all the custom placed objects in a cell.\n"..
-		color.Orange.."("..color.Red.."Warning:"..color.Orange.." this will literally save every 0-XXXXXXXX object in the cell!!)\n"
+	local msg = color.Orange.."Object Spawn System:\n\n"..sConfig.msgBoxColor..
+		color.Yellow.."Enter Unique Index "..sConfig.msgBoxColor.."to save only that index/scale.\n\n"..
+		color.Yellow.."Save Entire Cell "..sConfig.msgBoxColor.."to save all the custom placed objects in a cell.\n"..
+		sConfig.msgBoxColor.."("..color.Red.."Warning:"..sConfig.msgBoxColor.." this will literally save every 0-XXXXXXXX object in the cell!!)\n"
 		
-	tes3mp.CustomMessageBox(pid, config.ObjectSpawnOptionsMenu, msg, "Enter Unique Index;Save Entire Cell;Exit")
+	tes3mp.CustomMessageBox(pid, sConfig.ObjectSpawnOptionsMenu, msg, "Enter Unique Index;Save Entire Cell;View Currently Saved Objects;Exit")
 	
 end
 
@@ -516,19 +513,104 @@ objectSpawnSystem.SaveAllConfirmation = function(pid)
 	local thisCell = tes3mp.GetCell(pid)
 	local objectCount = getPlacedObjectCountForCell(pid)
 	
-	local msg = color.Orange.."Object Spawn System:\n\n"..color.Orange..
-		color.Red.."WARNING!\n\n"..color.Orange.."You are about to save every custom placed object in this cell:\n"..color.Yellow..thisCell..color.Orange..
-		"\n\nThere are "..color.White..objectCount..color.Orange.." placed objects in this cell to save.\n\nAre you sure you want to save?\n"
+	local msg = color.Orange.."Object Spawn System:\n\n"..sConfig.msgBoxColor..
+		color.Red.."WARNING!\n\n"..sConfig.msgBoxColor.."You are about to save every custom placed object in this cell:\n"..color.Yellow..thisCell..sConfig.msgBoxColor..
+		"\n\nThere are "..color.White..objectCount..sConfig.msgBoxColor.." placed objects in this cell to save.\n\nAre you sure you want to save?\n"
 		
-	tes3mp.CustomMessageBox(pid, config.ObjectSpawnSaveAllConfirm, msg, "Yes, Save;No, Don't Save;Exit")
+	tes3mp.CustomMessageBox(pid, sConfig.ObjectSpawnSaveAllConfirm, msg, "Yes, Save;No, Don't Save;Exit")
 
 end
 
+objectSpawnSystem.playerList = {}
 
+objectSpawnSystem.ViewAllSavedObjectsInThisCell = function(pid)
+	local thisCell = tes3mp.GetCell(pid)
+	
+	local label = sConfig.msgBoxColor.."Cell: \""..color.White..thisCell..sConfig.msgBoxColor.."\"\n"
+	local objCnt = 0
+	
+	local list = "  * Cancel\n"
+	
+	local objTable = {}
+	
+	if objectSpawnDB.spawnedObjectLocations[thisCell] ~= nil then
+		for i,_data in pairs(objectSpawnDB.spawnedObjectLocations[thisCell]) do
+			objCnt = objCnt + 1
+			table.insert(objTable, {uniqueIndex = i, refId = objectSpawnDB.spawnedObjectLocations[thisCell][i].refId})
+		end
+		
+		objectSpawnSystem.playerList[pid] = {}
+		for i=1, #objTable do
+			list = list..objTable[i].uniqueIndex ..color.Orange.." refId: "..color.White..objTable[i].refId .."\n"
+			table.insert(objectSpawnSystem.playerList[pid], {uniqueIndex = objTable[i].uniqueIndex, refId = objTable[i].refId})
+		end
+	end
+	
+	label = label.."Saved Object Count: "..color.White..objCnt
+	
+	tes3mp.ListBox(pid, sConfig.ObjectSpawnViewSavedInCell, label, list:sub(1, -2))
+end
+
+objectSpawnSystem.ObjectSpawnOptionsMenuSelectedObject = function(pid, selection)
+	
+	local index = objectSpawnSystem.playerList[pid][selection].uniqueIndex
+	local ref = objectSpawnSystem.playerList[pid][selection].refId
+	local thisCell = tes3mp.GetCell(pid)
+	
+	logicHandler.RunConsoleCommandOnObject(pid, "ExplodeSpell \"regenerate\"", thisCell, index, true)
+	
+	local msg = color.Orange.."Object Spawn System:\n\n"..sConfig.msgBoxColor..
+		sConfig.msgBoxColor.."uniqueIndex: "..color.White..index.."\n"..
+		sConfig.msgBoxColor.."refId: "..color.White..ref.."\n\n"..
+		sConfig.msgBoxColor.."What would you like to do?\n"
+		
+		objectSpawnSystem.playerList[pid] = {}
+		objectSpawnSystem.playerList[pid].uniqueIndex = index
+		objectSpawnSystem.playerList[pid].refId = ref
+		
+	tes3mp.CustomMessageBox(pid, sConfig.ObjectSpawnOptionsMenuSelectedObject, msg, "Delete From Saved Objects List;Back;Exit")
+	
+end
+
+
+local forciblyDeleteSavedObject = function(pid, thisCell, uniqueIndex)
+	
+	if objectSpawnDB.spawnedObjectLocations[thisCell] ~= nil then
+		if objectSpawnDB.spawnedObjectLocations[thisCell][uniqueIndex] ~= nil then
+			local replacementTable = {}
+			
+			for i,_data in pairs(objectSpawnDB.spawnedObjectLocations[thisCell]) do
+				local thisIndex = i
+				if thisIndex ~= uniqueIndex then
+					replacementTable[thisIndex] = _data
+				end
+			end
+			
+			objectSpawnDB.spawnedObjectLocations[thisCell] = replacementTable
+			
+			Save()
+		end
+	end
+	
+end
+
+local deletePlacedObjectsFromCell = function(pid)
+	
+	if objectSpawnSystem.playerList[pid] ~= nil then
+		local thisCell = tes3mp.GetCell(pid)
+		local uIndex = objectSpawnSystem.playerList[pid].uniqueIndex
+		local rId = objectSpawnSystem.playerList[pid].refId
+		
+		tes3mp.SendMessage(pid, color.Yellow.."[Object Spawn System]: "..color.Red.."Deleted: "..uIndex.." ("..rId..")\n", false)
+		forciblyDeleteSavedObject(pid, thisCell, uIndex)
+	end
+	
+	objectSpawnSystem.ViewAllSavedObjectsInThisCell(pid)
+end
 
 customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui, data)
 	
-	if idGui == config.InputUniqueIndexOfObject then
+	if idGui == sConfig.InputUniqueIndexOfObject then
 		if data == nil or data == " " then
             objectSpawnSelected[pid] = nil
 			return tes3mp.SendMessage(pid, color.Yellow.."[Object Spawn System]: "..color.Error.."No unique index entered.\n", false)
@@ -537,7 +619,7 @@ customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui
 			return objectSpawnSystem.UniqueIndexConfirmation(pid)
         end
 	
-	elseif idGui == config.UniqueIndexConfirmation then
+	elseif idGui == sConfig.UniqueIndexConfirmation then
 		if tonumber(data) == 1 then -- Save
 			return objectSpawnSystem.AddUniqueIndexToDatabase(pid)
 		elseif tonumber(data) == 2 then -- Set scale
@@ -545,10 +627,10 @@ customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui
         else
 			objectSpawnSelected[pid] = nil
 			objectSpawnSelectedScale[pid] = nil
-			return tes3mp.SendMessage(pid, color.Yellow.."[Object Spawn System]: "..color.Orange.."unique index "..color.Yellow.."not"..color.Orange.." added.\n", false)
+			return tes3mp.SendMessage(pid, color.Yellow.."[Object Spawn System]: "..sConfig.msgBoxColor.."unique index "..color.Yellow.."not"..sConfig.msgBoxColor.." added.\n", false)
         end
 		
-	elseif idGui == config.InputScaleForUniqueIndexOfObject then
+	elseif idGui == sConfig.InputScaleForUniqueIndexOfObject then
 		if data == nil or data == " " then
             objectSpawnSelected[pid] = nil
 			return tes3mp.SendMessage(pid, color.Yellow.."[Object Spawn System]: "..color.Error.."No scale entered.\n", false)
@@ -557,18 +639,18 @@ customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui
 			return objectSpawnSystem.UniqueIndexConfirmation(pid)
         end
 		
-	
-	elseif idGui == config.ObjectSpawnOptionsMenu then
+	elseif idGui == sConfig.ObjectSpawnOptionsMenu then
 		if tonumber(data) == 0 then -- Enter Unique Index
 			return objectSpawnSystem.InputUniqueIndexOfObject(pid)
 		elseif tonumber(data) == 1 then -- Save Entire Cell
 			return objectSpawnSystem.SaveAllConfirmation(pid)
+		elseif tonumber(data) == 2 then -- View Current Cells Saved Objects
+			objectSpawnSystem.ViewAllSavedObjectsInThisCell(pid)
         else -- Do nothing/Exit/Cancel
 			return
         end
 	
-	
-	elseif idGui == config.ObjectSpawnSaveAllConfirm then
+	elseif idGui == sConfig.ObjectSpawnSaveAllConfirm then
 		if tonumber(data) == 0 then -- Save
 			return savePlacedObjectsForCell(pid)
 		elseif tonumber(data) == 1 then --Don't Save
@@ -577,15 +659,31 @@ customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui
 			return
         end
 	
-	
-	
+	elseif idGui == sConfig.ObjectSpawnViewSavedInCell then
+		if tonumber(data) == 0 then -- Save
+			return savePlacedObjectsForCell(pid)
+		elseif tonumber(data) > 0 and tonumber(data) < 999999 then -- Selected Object
+			return objectSpawnSystem.ObjectSpawnOptionsMenuSelectedObject(pid, tonumber(data))
+        else -- Do nothing/Exit/Cancel
+			return
+        end
+		
+	elseif idGui == sConfig.ObjectSpawnOptionsMenuSelectedObject then
+		if tonumber(data) == 0 then -- Delete Saved Object
+			return deletePlacedObjectsFromCell(pid)
+		elseif tonumber(data) == 1 then -- Back
+			return objectSpawnSystem.ViewAllSavedObjectsInThisCell(pid)
+        else -- Do nothing/Exit/Cancel
+			return
+        end
+		
 	end
 	
 end)
 
 -- Commands
 customCommandHooks.registerCommand("sobj", function(pid, cmd)
-	if Players[pid].data.settings.staffRank >= config.staffRankToSaveObjectSpawns then
+	if Players[pid].data.settings.staffRank >= sConfig.staffRankToSaveObjectSpawns then
 		objectSpawnSystem.ObjectSpawnOptionsMenu(pid)
 	end
 end)
