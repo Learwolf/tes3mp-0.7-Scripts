@@ -13,16 +13,6 @@ DO NOT EDIT BEYOND THIS, UNLESS YOU KNOW WHAT YOU'RE DOING.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ]]
 
-local Methods = {}
-
-local split = function(s, delimiter)
-    result = {};
-    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
-        table.insert(result, match);
-    end
-    return result;
-end
-
 local listOfBeds = { 
 "active_de_r_bed_02",
 "active_de_p_bed_28",
@@ -67,67 +57,56 @@ local listOfBeds = {
 --"active_kolfinna_bedenable", -- Disabled due to having a unique script.
 --"CharGen_Bed", -- Disabled due to having a unique script.
 "active_de_bedroll"
- }
+}
 
 
 customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid, cellDescription, objects, players)
-	local name = Players[pid].name:lower()
-	local cell = LoadedCells[cellDescription]
+	-- Unused
+	--local name = Players[pid].name:lower()
+	--local cell = LoadedCells[cellDescription]
 
-	local isValid = eventStatus.validDefaultHandler
+	-- Checks
+	if eventStatus.validDefaultHandler == false then return eventStatus end
+	-- Don't need to do anything if the chance is 0
+	if dbAssassinsConfig.spawnChance == 0 then return eventStatus end
 
     for n,object in pairs(objects) do
-	
-        local temp = split(object["uniqueIndex"], "-")
-        local RefNum = temp[1]
-        local MpNum = temp[2]
-		
-		for id, bedObject in pairs(listOfBeds) do
-			if object.refId == bedObject then	
-				
-				-- If Lear variables dont exist, create them.
-				if Players[pid].data.customVariables.lear == nil then
-					Players[pid].data.customVariables.lear = {}
-				end
-				if Players[pid].data.customVariables.lear.questFixes == nil then
-					Players[pid].data.customVariables.lear.questFixes = {}
-				end
-				
-				-- Continue with script.
-				if not tableHelper.containsKeyValuePairs(Players[pid].data.journal, { quest = "tr_dbattack", index = 10 }, true) then
-					logicHandler.RunConsoleCommandOnPlayer(pid, "stopscript dbAttackScript")
-					if (Players[pid].data.customVariables.lear.questFixes.dbAttackCheck == nil and Players[pid].data.stats.level >= dbAssassinsConfig.levelRequirement) then
-						
-						if dbAssassinsConfig.spawnChance > 100 then	
-							dbAssassinsConfig.spawnChance = 100
-						end
-							
-						if dbAssassinsConfig.spawnChance > 0 then
-							local rolledDie = math.random(0, 100)
-							if rolledDie <= dbAssassinsConfig.spawnChance then -- <= rolledDie then
-								tes3mp.MessageBox(pid, -1, "You are interrupted by a loud noise.")
-								logicHandler.CreateObjectAtPlayer(pid, "db_assassin4", "spawn")
-								logicHandler.RunConsoleCommandOnPlayer(pid, "Journal TR_DBAttack 10")
-								Players[pid].data.customVariables.lear.questFixes.dbAttackCheck = 1
-							end
-						else
-							return
-						end
-					else
-						logicHandler.RunConsoleCommandOnPlayer(pid, "stopscript dbAttackScript")
+		-- If the object is a bed
+		if tableHelper.containsValue(listOfBeds, object.refId) then
+			-- If the player haven't started the quest yet
+			if not tableHelper.containsKeyValuePairs(Players[pid].data.journal, { quest = "tr_dbattack", index = 10 }, true) then
+				-- Stop the client script, does this need to run again?
+				logicHandler.RunConsoleCommandOnPlayer(pid, "stopscript dbAttackScript")
+				-- Are they high enough level
+				if Players[pid].data.stats.level >= dbAssassinsConfig.levelRequirement then
+					local rolledDie = math.random(1, 100)
+					if rolledDie <= dbAssassinsConfig.spawnChance then -- <= rolledDie then
+						tes3mp.MessageBox(pid, -1, "You are interrupted by a loud noise.")
+						logicHandler.CreateObjectAtPlayer(pid, "db_assassin4", "spawn")
+						logicHandler.RunConsoleCommandOnPlayer(pid, "Journal TR_DBAttack 10")
 					end
 				end
 			end
 		end
-
     end
-	eventStatus.validDefaultHandler = isValid
     return eventStatus
 end)
 
 customEventHooks.registerHandler("OnPlayerAuthentified", function(eventStatus, pid)
+	-- Does this run late enough?
 	logicHandler.RunConsoleCommandOnPlayer(pid, "stopscript dbAttackScript")
 end)
 
+customEventHooks.registerHandler("OnServerInit", function(eventStatus)
 
-return Methods
+	tes3mp.LogMessage(enumerations.log.INFO, "trueDisableAssassins Init")
+
+	-- Really we only need to run this one
+	if dbAssassinsConfig.spawnChance > 100 then	
+		dbAssassinsConfig.spawnChance = 100
+	end
+	if dbAssassinsConfig.spawnChance < 0 then
+		dbAssassinsConfig.spawnChance = 0
+	end
+end)
+
