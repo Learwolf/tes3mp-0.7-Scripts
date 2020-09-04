@@ -2,7 +2,9 @@ local dbAssassinsConfig = {}
 
 dbAssassinsConfig.levelRequirement = 30 -- This sets the level required to spawn an Assassin when a player uses a bed.
 dbAssassinsConfig.spawnChance = 100 -- This is the percentage that an Assassin will spawn when the above set leveled player uses a bed.
-									-- Example: Set this to 100 for 100% chance, 50 for a 50% chance, etc. and 0 for Assassins to never spawn.
+					-- Example: Set this to 100 for 100% chance, 50 for a 50% chance, etc. and 0 for Assassins to never spawn.
+dbAssassinsConfig.onlySpawnOnce = true -- When true, players will only be attacked by assassins once.
+
 --[[
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 DO NOT EDIT BEYOND THIS, UNLESS YOU KNOW WHAT YOU'RE DOING.
@@ -94,27 +96,29 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
 				end
 				
 				-- Continue with script.
-				if not tableHelper.containsKeyValuePairs(Players[pid].data.journal, { quest = "tr_dbattack", index = 10 }, true) then
-					logicHandler.RunConsoleCommandOnPlayer(pid, "stopscript dbAttackScript")
-					if (Players[pid].data.customVariables.lear.questFixes.dbAttackCheck == nil and Players[pid].data.stats.level >= dbAssassinsConfig.levelRequirement) then
-						
-						if dbAssassinsConfig.spawnChance > 100 then	
-							dbAssassinsConfig.spawnChance = 100
-						end
+				if not tableHelper.containsKeyValuePairs(Players[pid].data.journal, { quest = "tr_dbattack", index = 50 }, true) then
+					if not tableHelper.containsKeyValuePairs(Players[pid].data.journal, { quest = "tr_dbattack", index = 10 }, true) then
+						logicHandler.RunConsoleCommandOnPlayer(pid, "stopscript dbAttackScript")
+						if ((Players[pid].data.customVariables.lear.questFixes.dbAttackCheck == nil or dbAssassinsConfig.onlySpawnOnce == false) and Players[pid].data.stats.level >= dbAssassinsConfig.levelRequirement) then
 							
-						if dbAssassinsConfig.spawnChance > 0 then
-							local rolledDie = math.random(0, 100)
-							if rolledDie <= dbAssassinsConfig.spawnChance then -- <= rolledDie then
-								tes3mp.MessageBox(pid, -1, "You are interrupted by a loud noise.")
-								logicHandler.CreateObjectAtPlayer(pid, "db_assassin4", "spawn")
-								logicHandler.RunConsoleCommandOnPlayer(pid, "Journal TR_DBAttack 10")
-								Players[pid].data.customVariables.lear.questFixes.dbAttackCheck = 1
+							if dbAssassinsConfig.spawnChance > 100 then	
+								dbAssassinsConfig.spawnChance = 100
+							end
+								
+							if dbAssassinsConfig.spawnChance > 0 then
+								local rolledDie = math.random(0, 100)
+								if rolledDie <= dbAssassinsConfig.spawnChance then -- <= rolledDie then
+									tes3mp.MessageBox(pid, -1, "You are interrupted by a loud noise.")
+									logicHandler.CreateObjectAtPlayer(pid, "db_assassin4", "spawn")
+									logicHandler.RunConsoleCommandOnPlayer(pid, "Journal TR_DBAttack 10")
+									Players[pid].data.customVariables.lear.questFixes.dbAttackCheck = 1
+								end
+							else
+								return
 							end
 						else
-							return
+							logicHandler.RunConsoleCommandOnPlayer(pid, "stopscript dbAttackScript")
 						end
-					else
-						logicHandler.RunConsoleCommandOnPlayer(pid, "stopscript dbAttackScript")
 					end
 				end
 			end
