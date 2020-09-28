@@ -1,9 +1,13 @@
 --[[
 	Object Spawn System
-	   version 1.01
+	   version 1.02
 		by Learwolf
 		
 	Version History:
+		* 1.02 (9/28/2020) - Fixed an issue where I apparently went full stupid.
+							Added a toggle in config section for the update cell overwrite feature.
+							Added a toggle in config section for the write printout feature.
+		
 		* 1.01 (7/5/2020) - Removed some unecessary code. 
 							Reworked method to place objects.
 							Added option to save container inventory contents. 
@@ -69,6 +73,9 @@ objectSpawnSystem = {}
 
 local sConfig = {}
 
+sConfig.loadUpdateSpawnsOnStartUp = false -- If true, will COMPLETELY overwrite the ENTIRE cells with the spawns found inside: updatedObjectSpawnDB
+sConfig.writePrintOuts = false -- If true, will use the writePrintout feature (useful for debugging, and tracking what is done).
+
 sConfig.staffRankToSaveObjectSpawns = 2 -- This is the only thing you should need to configure. >= this number is the staff rank that can use the /sobj command.
 sConfig.saveObjectInventoryContents = false -- If true, this will save placed containers inventory contents. If false, it wont.
 
@@ -116,9 +123,11 @@ customEventHooks.registerHandler("OnServerPostInit", function(eventStatus)
 		Save()
 	end
 	
-	if updatedObjectSpawnDB ~= nil and updatedObjectSpawnDB.spawnedObjectLocations ~= nil then
-		objectSpawnDB.spawnedObjectLocations = updatedObjectSpawnDB.spawnedObjectLocations
-		Save()
+	if sConfig.loadUpdateSpawnsOnStartUp then
+		if updatedObjectSpawnDB ~= nil and updatedObjectSpawnDB.spawnedObjectLocations ~= nil then
+			objectSpawnDB.spawnedObjectLocations = updatedObjectSpawnDB.spawnedObjectLocations
+			Save()
+		end
 	end
 	Load()
 end)
@@ -133,9 +142,11 @@ local loadPrintout = function()
 end
 
 local writePrintout = function(text2Write)
-	local file = loadPrintout()
-	file:write(text2Write,"\n")
-	io.close(file)
+	if sConfig.writePrintOuts then
+		local file = loadPrintout()
+		file:write(text2Write,"\n")
+		io.close(file)
+	end
 end
 
 
@@ -145,7 +156,7 @@ local getPlacedObjectCountForCell = function(pid)
 	local thisCell = tes3mp.GetCell(pid)
 	local amount = 0
 	
-	if LoadedCells[thisCell] == nil then
+	if LoadedCells[thisCell] ~= nil then
 		if LoadedCells[thisCell].data.packets.place ~= nil then
 			for i=1, #LoadedCells[thisCell].data.packets.place do
 				amount = amount + 1
@@ -178,7 +189,6 @@ local savePlacedObjectsForCell = function(pid)
 		end
 	end
 	
-	
 	for _,uniqueIndex in pairs(uniqueIndexesToCheck) do
 	
 		if objectSpawnDB.spawnedObjectLocations[thisCell] ~= nil and objectSpawnDB.spawnedObjectLocations[thisCell][uniqueIndex] ~= nil then
@@ -192,7 +202,6 @@ local savePlacedObjectsForCell = function(pid)
 			
 			if LoadedCells[thisCell].data.objectData[uniqueIndex] ~= nil then
 				local oRefId = LoadedCells[thisCell].data.objectData[uniqueIndex].refId
-				--print(oRefId)
 				
 				if LoadedCells[thisCell].data.objectData[uniqueIndex].location == nil then 
 					tes3mp.SendMessage(pid, color.Yellow.."[Object Spawn System]: "..color.Error.."The unique index "..color.Yellow..uniqueIndex..color.Error..
@@ -211,7 +220,6 @@ local savePlacedObjectsForCell = function(pid)
 						rotY = LoadedCells[thisCell].data.objectData[uniqueIndex].location.rotY,
 						rotZ = LoadedCells[thisCell].data.objectData[uniqueIndex].location.rotZ
 					}
-					
 					
 					if objectSpawnDB.spawnedObjectLocations[thisCell] == nil then objectSpawnDB.spawnedObjectLocations[thisCell] = {} end
 					
@@ -273,12 +281,9 @@ local savePlacedObjectsForCell = function(pid)
 				writePrintout(txt)
 			end
 		
-		
-			
 		end
 	
 	end
-	
 	
 	if triggerSave then
 		Save()
@@ -286,14 +291,11 @@ local savePlacedObjectsForCell = function(pid)
 					"Saved Objects: "..color.White..placeAmount..sConfig.msgBoxColor.."\nSaved Scales: "..color.White..scaleAmount.."\n"..
 					"Saved Containers: "..color.White..containerAmount..sConfig.msgBoxColor.."\n"
 		
-		
 		local txt = thisCell.." saved successfully!\nSaved Objects: "..placeAmount.."\nSaved Scales: "..scaleAmount.."\nSaved Container Contents: "..containerAmount
 		writePrintout(txt)
 		
 		tes3mp.SendMessage(pid, msg, false)
 	end
-	
-	
 	
 end
 
@@ -328,7 +330,7 @@ end
 
 objectSpawnSystem.CheckForCellObjectSpawns = function(pid)
 	
-	local pushSave = false
+	--local pushSave = false
 	
 	for cellId, oCellData in pairs(objectSpawnDB.spawnedObjectLocations) do
 		if LoadedCells[cellId] ~= nil and not LoadedCells[cellId].data.placedObjects then
@@ -365,7 +367,7 @@ objectSpawnSystem.CheckForCellObjectSpawns = function(pid)
 					LoadedCells[cellId]:LoadContainers(pid, LoadedCells[cellId].data.objectData, {newUniqueIndex})
 				end
 				
-				pushSave = true
+				--pushSave = true
 				
 			end
 			
@@ -377,7 +379,7 @@ objectSpawnSystem.CheckForCellObjectSpawns = function(pid)
 		end
 	end
 	
-	if pushSave then Save() end
+	--if pushSave then Save() end
 end
 
 
@@ -687,7 +689,6 @@ customCommandHooks.registerCommand("sobj", function(pid, cmd)
 		objectSpawnSystem.ObjectSpawnOptionsMenu(pid)
 	end
 end)
-
 
 
 return objectSpawnSystem
