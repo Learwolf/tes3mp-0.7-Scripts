@@ -3,7 +3,7 @@ Script:
 	Moderator Action Menu
 	
 Version:
-	1.02
+	1.03
 	
 For TES3MP Version:
 	Alpha 0.7
@@ -12,6 +12,9 @@ Created by:
 	Learwolf
 	
 Version History:
+	1.03 - Date: 10/3/2020
+		* Added a configuration line for jrpChat users. Set config.jrpChatEnabled to true if you are using jrpChat.lua
+		
 	1.02 - Date: 4/21/2020
 		* Fixed some stuff related to GoTo functions.
 		* Added config.GoToLocationRank for staff rank requirements to other goto functions.
@@ -85,6 +88,8 @@ local config = {}
 -- Set the staff rank requirement for certain menu functions:
 --==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--
 config.MsgBoxColor = "#AB8C53"
+
+config.jrpChatEnabled = false -- Set this to true if you are using jrpChat.lua
 
 config.ModMenuRank = 1 -- Staff rank to access the Moderator Menu.
 config.InvisRank = 2 -- Staff rank in order to simulate legit invisibility.
@@ -1480,8 +1485,10 @@ customEventHooks.registerValidator("OnPlayerSendMessage", function(eventStatus, 
 		tes3mp.SendMessage(pid, color.Red .. "You have been muted by a staff member.\n", false)
 		return customEventHooks.makeEventStatus(false, false)
 	else
-		eventStatus.validDefaultHandler = true
-		return eventStatus
+		if config.jrpChatEnabled == false then
+			eventStatus.validDefaultHandler = true
+			return eventStatus
+		end
 	end
 	
 end)
@@ -1552,4 +1559,3 @@ customCommandHooks.registerCommand("goto", function(pid, cmd)
         end
 	end
 end)
-
