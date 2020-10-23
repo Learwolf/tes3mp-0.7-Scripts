@@ -163,9 +163,6 @@ config.spawnCellsToAlwaysDelete = {"-3, -2", "-3, -3", "18, 4"} -- Insert cells 
 											 -- but do not have the NPC saved in the cell.
 											 -- 
 config.onlyDeleteTheAboveCellsOnResetTimes = true -- True to only delete the above cells on server reset timers stated below. False to delete them every time the server restarts, even on crashes.
-config.deleteCellsServerResetTimer = {"06:00","18:00"} -- This is the time(s) that a hard server reset occurs in order to push the cells to always delete (seen above)
-config.deleteCellsServerResetTimerLeeway = 15 -- Seconds of leeway from the stated reset timer above, incase anything delays the server reset.							
-
 
 
 --logicHandler.DeleteObjectForPlayer(pid, "Gnisis, Almu Cave Dwelling", "12051-0")
