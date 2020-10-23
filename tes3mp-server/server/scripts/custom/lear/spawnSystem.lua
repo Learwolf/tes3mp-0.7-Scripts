@@ -165,9 +165,6 @@ config.spawnCellsToAlwaysDelete = {} -- Example: {"-3, -2", "-3, -3"}
 					-- 
 config.onlyDeleteTheAboveCellsOnResetTimes = true -- True to only delete the above cells on server reset timers stated below. False to delete them every time the server restarts, even on crashes.
 
-
---logicHandler.DeleteObjectForPlayer(pid, "Gnisis, Almu Cave Dwelling", "12051-0")
---config.spawnsToDelete = {["Gnisis, Almu Cave Dwelling"] = "12051-0"}
 config.spawnsToDelete = {
 	-- EXAMPLES: (Uncomment out these examples to use them.)
 	
