@@ -158,10 +158,11 @@ config.corpseDespawnTimerRefresh = 300	-- This is what the despawn timer for cor
 
 config.distanceBeforeResetSpawn = 2000	-- This is how far a creature/npc can travel before they are deleted and respawned at their spawn point.
 
-config.spawnCellsToAlwaysDelete = {"-3, -2", "-3, -3", "18, 4"} -- Insert cells that should ALWAYS be wiped clean in the database on resets.
-								-- This is useful for cells that you have saved and reload on server resets, 
-								-- but do not have the NPC saved in the cell.
-								-- 
+config.spawnCellsToAlwaysDelete = {} -- Example: {"-3, -2", "-3, -3"}
+					-- Insert cells that should ALWAYS be wiped clean in the database on resets.
+					-- This is useful for cells that you have saved and reload on server resets, 
+					-- but do not have the NPC saved in the cell.
+					-- 
 config.onlyDeleteTheAboveCellsOnResetTimes = true -- True to only delete the above cells on server reset timers stated below. False to delete them every time the server restarts, even on crashes.
 
 
