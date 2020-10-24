@@ -1344,6 +1344,10 @@ CreatureSpawnSystem.SaveSpawnFunction = function(pid)
 		mobSpawnDB.creatureSpawnLocations[pVar.cell][newSpawnId].rareSpawn = pVar.rareSpawn
 	end
 	
+	if pVar.respawnScaleSize then
+		mobSpawnDB.creatureSpawnLocations[pVar.cell][newSpawnId].scale = pVar.respawnScaleSize
+	end
+	
 	mobSpawnDB.creatureSpawnLocations[pVar.cell][newSpawnId].posX = pVar.posX
 	mobSpawnDB.creatureSpawnLocations[pVar.cell][newSpawnId].posY = pVar.posY
 	mobSpawnDB.creatureSpawnLocations[pVar.cell][newSpawnId].posZ = pVar.posZ
