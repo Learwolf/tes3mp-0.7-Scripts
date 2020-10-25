@@ -1,9 +1,13 @@
 --[[
 	Learwolf's Spawn System
 	
-		Version 1.03
+		Version 1.04
 		
 		Update History:
+
+			Version 1.04 (10/25/2020)
+				* Added link to my npcBuffing.lua script.
+				* Be sure to set `config.useNpcBuffingScript = true` if using it.
 			
 			Version 1.03 (10/23/2020)
 				* Resolved issues with scaling.
@@ -141,6 +145,8 @@
 CreatureSpawnSystem = {}
 
 local config = {}
+
+config.useNpcBuffingScript = false -- If using Learwolfs npcBuffing.lua script, this should be set to true. Otherwise, this should be false.
 
 config.staffRankToUseSpawnMenu = 2 -- The staffRank allowed to use `/spawnpoint` to setup creature spawnpoints.
 
@@ -481,6 +487,9 @@ CreatureSpawnSystem.distanceTooFarCreature = function(uniqueIndex)--, targetRefI
 			   if Players[visitorPid] ~= nil and Players[visitorPid]:IsLoggedIn() then
 					if LoadedCells[cellId] ~= nil then
 						LoadedCells[cellId]:LoadObjectsScaled(visitorPid, objectData, {newIndex})
+						if config.useNpcBuffingScript == true then -- An additional script by me.
+							npcBuffing.CheckForRefIds(visitorPid, cellId)
+						end
 					end
 				end
 			end
@@ -633,6 +642,9 @@ function checkCreatureSpawns()
 						   if Players[visitorPid] ~= nil and Players[visitorPid]:IsLoggedIn() then
 								if LoadedCells[cellId] ~= nil then
 									LoadedCells[cellId]:LoadObjectsScaled(visitorPid, objectData, {newIndex})
+									if config.useNpcBuffingScript == true then -- An additional script by me.
+										npcBuffing.CheckForRefIds(visitorPid, cellId)
+									end
 								end
 							end
 						end
@@ -1420,6 +1432,9 @@ CreatureSpawnSystem.SaveSpawnFunction = function(pid)
 		   if Players[visitorPid] ~= nil and Players[visitorPid]:IsLoggedIn() then
 				if LoadedCells[cellId] ~= nil then
 					LoadedCells[cellId]:LoadObjectsScaled(visitorPid, objectData, {newIndex})
+					if config.useNpcBuffingScript == true then -- An additional script by me.
+						npcBuffing.CheckForRefIds(visitorPid, cellId)
+					end
 				end
 			end
 		end
