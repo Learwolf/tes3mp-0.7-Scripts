@@ -406,8 +406,11 @@ customEventHooks.registerHandler("OnServerPostInit", OnServerPostInit)
 npcBuffing.CheckForRefIds = function(pid, cellDescription, forEveryone)
 	--if cellDescription == nil or LoadedCells[cellDescription] == nil then return end
 	if LoadedCells[cellDescription] ~= nil then
+		
+		local addedBuffIndexes = {}
+		
 		for _index,objIndex in pairs(LoadedCells[cellDescription].data.packets.actorList) do
-			if cellDescription ~= nil and LoadedCells[cellDescription] ~= nil and LoadedCells[cellDescription].data.objectData[objIndex] ~= nil then 
+			if cellDescription ~= nil and LoadedCells[cellDescription] ~= nil and LoadedCells[cellDescription].data.objectData[objIndex] ~= nil and not tableHelper.containsValue(addedBuffIndexes, objIndex) then 
 				
 				local targetRefId = LoadedCells[cellDescription].data.objectData[objIndex].refId
 				
@@ -426,6 +429,8 @@ npcBuffing.CheckForRefIds = function(pid, cellDescription, forEveryone)
 							tes3mp.LogAppend(enumerations.log.INFO, "-[NpcBuffing]: \""..targetRefId.."\" ("..objIndex..") had spell: \""..buffRefId.."\" added by PID: ("..pid..").")
 						end
 					end
+					
+					table.insert(addedBuffIndexes, objIndex)
 				end
 			end
 		end
