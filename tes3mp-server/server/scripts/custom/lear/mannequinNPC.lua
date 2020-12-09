@@ -1,7 +1,7 @@
 --[[
 		TES3MP Mannequins
 			by Learwolf
-			  V.1.01
+			  V.1.02
 	--==----==----==----==----==----==----==----==----==----==----==----==----==----==----==----==--
 	-- Installation Notes:
 	--==----==----==----==----==----==----==----==----==----==----==----==----==----==----==----==--
@@ -42,6 +42,9 @@
 	--==----==----==----==----==----==----==----==----==----==----==----==----==----==----==----==--
 	--	Version History
 	--==----==----==----==----==----==----==----==----==----==----==----==----==----==----==----==--
+			Version 1.02 (112/9/2020)
+				- Simplified the customRecord creation process.
+			
 			Version 1.01 (4/3/2020)
 				- Revision for public release.
 				- Added method for players to lock mannequins.
@@ -186,7 +189,9 @@ local mannequinShop = {}
 -- Create the note on server startup:
 local function createRecord()
 --==----==----==----==----==----==----==----==----==----==----==----==----==--
+
 	local recordStore = RecordStores["spell"]
+	
 	recordStore.data.permanentRecords["npc_buffing_mannequin_buff"] = {
 		name = "Mannequin Buff",
 		subtype = 1, -- subtype = 4,
@@ -347,408 +352,88 @@ local function createRecord()
 	}
 	
 	recordStore:Save()
-	
 --==----==----==----==----==----==----==----==----==----==----==----==----==--
 	
 	recordStore = RecordStores["npc"]
 	
-	recordStore.data.permanentRecords["mannequin_script_dunmer_male"] = {
-		name = "Mannequin: Dunmer Male",
-		--gender = 1,
-		baseId = "belvis sedri",
-		health = 999999999,
-		fatigue = 999999999,
-		level = 9999,
-		items = {},
-		race = "dark elf",
-		head = "b_n_dark elf_m_head_06",
-		hair = "b_n_dark elf_m_hair_22",
-		script = ""
+	local listOfMannequinNPCs = { -- These are the NPCs mannequins:
+		{refId = "mannequin_script_dunmer_male", name = "Mannequin: Dunmer Male", race = "dark elf", gender = 1, head = "b_n_dark elf_m_head_06", hair = "b_n_dark elf_m_hair_22"},
+		{refId = "mannequin_script_dunmer_female", name = "Mannequin: Dunmer Female", race = "dark elf", gender = 0, head = "b_n_dark elf_f_head_02", hair = "b_n_dark elf_f_hair_01"},
+		{refId = "mannequin_script_breton_male", name = "Mannequin: Breton Male", race = "breton", gender = 1, head = "b_n_breton_m_head_05", hair = "b_n_breton_m_hair_02"},
+		{refId = "mannequin_script_breton_female", name = "Mannequin: Breton Female", race = "breton", gender = 0, head = "b_n_breton_f_head_02", hair = "b_n_breton_f_hair_02"},
+		{refId = "mannequin_script_altmer_male", name = "Mannequin: Altmer Male", race = "high elf", gender = 1, head = "b_n_high elf_m_head_03", hair = "b_n_high elf_m_hair_04"},
+		{refId = "mannequin_script_altmer_female", name = "Mannequin: Altmer Female", race = "high elf", gender = 0, head = "b_n_high elf_f_head_03", hair = "b_n_high elf_f_hair_02"},
+		{refId = "mannequin_script_imperial_male", name = "Mannequin: Imperial Male", race = "imperial", gender = 1, head = "B_N_Imperial_M_Head_07", hair = "b_n_imperial_m_hair_05"},
+		{refId = "mannequin_script_imperial_female", name = "Mannequin: Imperial Female", race = "imperial", gender = 0, head = "b_n_Imperial_f_head_03", hair = "b_n_imperial_f_hair_01"},
+		{refId = "mannequin_script_nord_male", name = "Mannequin: Nord Male", race = "nord", gender = 1, head = "b_n_nord_m_head_05", hair = "b_n_nord_m_hair01"},
+		{refId = "mannequin_script_nord_female", name = "Mannequin: Nord Female", race = "nord", gender = 0, head = "b_n_nord_f_head_03", hair = "b_n_nord_f_hair_03"},
+		{refId = "mannequin_script_orc_male", name = "Mannequin: Orsimer Male", race = "orc", gender = 1, head = "b_n_orc_m_head_01", hair = "b_n_orc_m_hair_05"},
+		{refId = "mannequin_script_orc_female", name = "Mannequin: Orsimer Female", race = "orc", gender = 0, head = "b_n_orc_f_head_02", hair = "b_n_orc_f_hair05"},
+		{refId = "mannequin_script_redguard_male", name = "Mannequin: Redguard Male", race = "redguard", gender = 1, head = "b_n_redguard_m_head_04", hair = "b_n_redguard_m_hair_03"},
+		{refId = "mannequin_script_redguard_female", name = "Mannequin: Redguard Female", race = "redguard", gender = 0, head = "b_n_redguard_f_head_03", hair = "b_n_redguard_f_hair_01"},
+		{refId = "mannequin_script_bosmer_male", name = "Mannequin: Bosmer Male", race = "wood elf", gender = 1, head = "b_n_wood elf_m_head_04", hair = "b_n_wood elf_m_hair_06"},
+		{refId = "mannequin_script_bosmer_female", name = "Mannequin: Bosmer Female", race = "wood elf", gender = 0, head = "b_n_wood elf_f_head_03", hair = "b_n_wood elf_f_hair_03"},
+		-- EXAMPLE FOR YOUR OWN MANNEQUIN: {refId = "give_the_npc_an_unique_all_lowercase_refid", name = "Enter Whatever Name You Want Here", race = "input race id here, see race examples above for exact spelling", gender = 0 for female or 1 for male, head = "insert the races head model here", hair = "insert the races hair model here"},
 	}
-	recordStore:Save()
 	
-	recordStore.data.permanentRecords["mannequin_script_dunmer_female"] = {
-		name = "Mannequin: Dunmer Female",
-		gender = 0,
-		baseId = "belvis sedri",
-		health = 999999999,
-		fatigue = 999999999,
-		level = 9999,
-		items = {},
-		race = "dark elf",
-		head = "b_n_dark elf_f_head_02",
-		hair = "b_n_dark elf_f_hair_01",
-		script = ""
-	}
+	for i=1,#listOfMannequinNPCs do
+		local actor = listOfMannequinNPCs[i]
+		recordStore.data.permanentRecords[actor.refId] = {
+			name = actor.name,
+			baseId = "belvis sedri",
+			health = 999999999,
+			fatigue = 999999999,
+			level = 9999,
+			items = {},
+			race = actor.race,
+			gender = actor.gender,
+			head = actor.head,
+			hair = actor.hair,
+			script = ""
+		}
+		
+	end
 	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_breton_male"] = {
-		name = "Mannequin: Breton Male",
-		baseId = "belvis sedri",
-		health = 999999999,
-		fatigue = 999999999,
-		level = 9999,
-		items = {},
-		race = "breton",
-		head = "b_n_breton_m_head_05",
-		hair = "b_n_breton_m_hair_02",
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_breton_female"] = {
-		name = "Mannequin: Breton Female",
-		gender = 0,
-		baseId = "belvis sedri",
-		health = 999999999,
-		fatigue = 999999999,
-		level = 9999,
-		items = {},
-		race = "breton",
-		head = "b_n_breton_f_head_02",
-		hair = "b_n_breton_f_hair_02",
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_altmer_male"] = {
-		name = "Mannequin: Altmer Male",
-		baseId = "belvis sedri",
-		health = 999999999,
-		fatigue = 999999999,
-		level = 9999,
-		items = {},
-		race = "high elf",
-		head = "b_n_high elf_m_head_03",
-		hair = "b_n_high elf_m_hair_04",
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_altmer_female"] = {
-		name = "Mannequin: Altmer Female",
-		gender = 0,
-		baseId = "belvis sedri",
-		health = 999999999,
-		fatigue = 999999999,
-		level = 9999,
-		items = {},
-		race = "high elf",
-		head = "b_n_high elf_f_head_03",
-		hair = "b_n_high elf_f_hair_02",
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_imperial_male"] = {
-		name = "Mannequin: Imperial Male",
-		baseId = "belvis sedri",
-		health = 999999999,
-		fatigue = 999999999,
-		level = 9999,
-		items = {},
-		race = "imperial",
-		head = "B_N_Imperial_M_Head_07",
-		hair = "b_n_imperial_m_hair_05",
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_imperial_female"] = {
-		name = "Mannequin: Imperial Female",
-		gender = 0,
-		baseId = "belvis sedri",
-		health = 999999999,
-		fatigue = 999999999,
-		level = 9999,
-		items = {},
-		race = "imperial",
-		head = "b_n_Imperial_f_head_03",
-		hair = "b_n_imperial_f_hair_01",
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_nord_male"] = {
-		name = "Mannequin: Nord Male",
-		baseId = "belvis sedri",
-		health = 999999999,
-		fatigue = 999999999,
-		level = 9999,
-		items = {},
-		race = "nord",
-		head = "b_n_nord_m_head_05",
-		hair = "b_n_nord_m_hair01",
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_nord_female"] = {
-		name = "Mannequin: Nord Female",
-		gender = 0,
-		baseId = "belvis sedri",
-		health = 999999999,
-		fatigue = 999999999,
-		level = 9999,
-		items = {},
-		race = "nord",
-		head = "b_n_nord_f_head_03",
-		hair = "b_n_nord_f_hair_03",
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_orc_male"] = {
-		name = "Mannequin: Orsimer Male",
-		baseId = "belvis sedri",
-		health = 999999999,
-		fatigue = 999999999,
-		level = 9999,
-		items = {},
-		race = "orc",
-		head = "b_n_orc_m_head_01",
-		hair = "b_n_orc_m_hair_05",
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_orc_female"] = {
-		name = "Mannequin: Orsimer Female",
-		gender = 0,
-		baseId = "belvis sedri",
-		health = 999999999,
-		fatigue = 999999999,
-		level = 9999,
-		items = {},
-		race = "orc",
-		head = "b_n_orc_f_head_02",
-		hair = "b_n_orc_f_hair05",
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_redguard_male"] = {
-		name = "Mannequin: Redguard Male",
-		baseId = "belvis sedri",
-		health = 999999999,
-		fatigue = 999999999,
-		level = 9999,
-		items = {},
-		race = "redguard",
-		head = "b_n_redguard_m_head_04",
-		hair = "b_n_redguard_m_hair_03",
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_redguard_female"] = {
-		name = "Mannequin: Redguard Female",
-		gender = 0,
-		baseId = "belvis sedri",
-		health = 999999999,
-		fatigue = 999999999,
-		level = 9999,
-		items = {},
-		race = "redguard",
-		head = "b_n_redguard_f_head_03",
-		hair = "b_n_redguard_f_hair_01",
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_bosmer_male"] = {
-		name = "Mannequin: Bosmer Male",
-		baseId = "belvis sedri",
-		health = 999999999,
-		fatigue = 999999999,
-		level = 9999,
-		items = {},
-		race = "wood elf",
-		head = "b_n_wood elf_m_head_04",
-		hair = "b_n_wood elf_m_hair_06",
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_bosmer_female"] = {
-		name = "Mannequin: Bosmer Female",
-		gender = 0,
-		baseId = "belvis sedri",
-		health = 999999999,
-		fatigue = 999999999,
-		level = 9999,
-		items = {},
-		race = "wood elf",
-		head = "b_n_wood elf_f_head_03",
-		hair = "b_n_wood elf_f_hair_03",
-		script = ""
-	}
-	recordStore:Save()
-	
+
+
 	
 --==----==----==----==----==----==----==----==----==----==----==----==----==--
-	
 	recordStore = RecordStores["miscellaneous"]
-	recordStore.data.permanentRecords["mannequin_script_item_dunmer_male"] = {
-		name = "Mannequin: Dunmer Male",
-		icon = "m\\Tx_vivec_ashmask_01.tga",
-		model = "m\\Misc_vivec_ashmask_01.NIF",
-		weight = 0.5,
-		value = 0,
-		script = ""
-	}
-	recordStore:Save()
 	
-	recordStore.data.permanentRecords["mannequin_script_item_dunmer_female"] = {
-		name = "Mannequin: Dunmer Female",
-		icon = "m\\Tx_vivec_ashmask_01.tga",
-		model = "m\\Misc_vivec_ashmask_01.NIF",
-		weight = 0.5,
-		value = 0,
-		script = ""
+	local listOfMannequinItems = { -- These are the player inventory items that spawn mannequins:
+		{refId = "mannequin_script_item_dunmer_male", name = "Mannequin: Dunmer Male"},
+		{refId = "mannequin_script_item_dunmer_female", name = "Mannequin: Dunmer Female"},
+		{refId = "mannequin_script_item_breton_male", name = "Mannequin: Breton Male"},
+		{refId = "mannequin_script_item_breton_female", name = "Mannequin: Breton Female"},
+		{refId = "mannequin_script_item_altmer_male", name = "Mannequin: Altmer Male"},
+		{refId = "mannequin_script_item_altmer_female", name = "Mannequin: Altmer Female"},
+		{refId = "mannequin_script_item_imperial_male", name = "Mannequin: Imperial Male"},
+		{refId = "mannequin_script_item_imperial_female", name = "Mannequin: Imperial Female"},
+		{refId = "mannequin_script_item_nord_male", name = "Mannequin: Nord Male"},
+		{refId = "mannequin_script_item_nord_female", name = "Mannequin: Nord Female"},
+		{refId = "mannequin_script_item_orc_male", name = "Mannequin: Orsimer Male"},
+		{refId = "mannequin_script_item_orc_demale", name = "Mannequin: Orsimer Female"},
+		{refId = "mannequin_script_item_redguard_male", name = "Mannequin: Redguard Male"},
+		{refId = "mannequin_script_item_redguard_demale", name = "Mannequin: Redguard Female"},
+		{refId = "mannequin_script_item_bosmer_male", name = "Mannequin: Bosmer Male"},
+		{refId = "mannequin_script_item_bosmer_female", name = "Mannequin: Bosmer Female"},
+		-- EXAMPLE FOR YOUR OWN MANNEQUIN: {refId = "give_the_item_an_unique_all_lowercase_refid", name = "Enter Whatever Name Scheme You Want Here"},
 	}
-	recordStore:Save()
 	
-	recordStore.data.permanentRecords["mannequin_script_item_breton_male"] = {
-		name = "Mannequin: Breton Male",
-		icon = "m\\Tx_vivec_ashmask_01.tga",
-		model = "m\\Misc_vivec_ashmask_01.NIF",
-		weight = 0.5,
-		value = 0,
-		script = ""
-	}
+	for i=1,#listOfMannequinItems do
+		local item = listOfMannequinItems[i]
+		recordStore.data.permanentRecords[item.refId] = {
+			name = item.name,
+			icon = "m\\Tx_vivec_ashmask_01.tga",
+			model = "m\\Misc_vivec_ashmask_01.NIF",
+			weight = 0.5,
+			value = 0,
+			script = ""
+		}
+		
+	end
 	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_item_breton_female"] = {
-		name = "Mannequin: Breton Female",
-		icon = "m\\Tx_vivec_ashmask_01.tga",
-		model = "m\\Misc_vivec_ashmask_01.NIF",
-		weight = 0.5,
-		value = 0,
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_item_altmer_male"] = {
-		name = "Mannequin: Altmer Male",
-		icon = "m\\Tx_vivec_ashmask_01.tga",
-		model = "m\\Misc_vivec_ashmask_01.NIF",
-		weight = 0.5,
-		value = 0,
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_item_altmer_female"] = {
-		name = "Mannequin: Altmer Female",
-		icon = "m\\Tx_vivec_ashmask_01.tga",
-		model = "m\\Misc_vivec_ashmask_01.NIF",
-		weight = 0.5,
-		value = 0,
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_item_imperial_male"] = {
-		name = "Mannequin: Imperial Male",
-		icon = "m\\Tx_vivec_ashmask_01.tga",
-		model = "m\\Misc_vivec_ashmask_01.NIF",
-		weight = 0.5,
-		value = 0,
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_item_imperial_female"] = {
-		name = "Mannequin: Imperial Female",
-		icon = "m\\Tx_vivec_ashmask_01.tga",
-		model = "m\\Misc_vivec_ashmask_01.NIF",
-		weight = 0.5,
-		value = 0,
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_item_nord_male"] = {
-		name = "Mannequin: Nord Male",
-		icon = "m\\Tx_vivec_ashmask_01.tga",
-		model = "m\\Misc_vivec_ashmask_01.NIF",
-		weight = 0.5,
-		value = 0,
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_item_nord_female"] = {
-		name = "Mannequin: Nord Female",
-		icon = "m\\Tx_vivec_ashmask_01.tga",
-		model = "m\\Misc_vivec_ashmask_01.NIF",
-		weight = 0.5,
-		value = 0,
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_item_orc_male"] = {
-		name = "Mannequin: Orsimer Male",
-		icon = "m\\Tx_vivec_ashmask_01.tga",
-		model = "m\\Misc_vivec_ashmask_01.NIF",
-		weight = 0.5,
-		value = 0,
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_item_orc_female"] = {
-		name = "Mannequin: Orsimer Female",
-		icon = "m\\Tx_vivec_ashmask_01.tga",
-		model = "m\\Misc_vivec_ashmask_01.NIF",
-		weight = 0.5,
-		value = 0,
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_item_redguard_male"] = {
-		name = "Mannequin: Redguard Male",
-		icon = "m\\Tx_vivec_ashmask_01.tga",
-		model = "m\\Misc_vivec_ashmask_01.NIF",
-		weight = 0.5,
-		value = 0,
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_item_redguard_female"] = {
-		name = "Mannequin: Redguard Female",
-		icon = "m\\Tx_vivec_ashmask_01.tga",
-		model = "m\\Misc_vivec_ashmask_01.NIF",
-		weight = 0.5,
-		value = 0,
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_item_bosmer_male"] = {
-		name = "Mannequin: Bosmer Male",
-		icon = "m\\Tx_vivec_ashmask_01.tga",
-		model = "m\\Misc_vivec_ashmask_01.NIF",
-		weight = 0.5,
-		value = 0,
-		script = ""
-	}
-	recordStore:Save()
-	
-	recordStore.data.permanentRecords["mannequin_script_item_bosmer_female"] = {
-		name = "Mannequin: Bosmer Female",
-		icon = "m\\Tx_vivec_ashmask_01.tga",
-		model = "m\\Misc_vivec_ashmask_01.NIF",
-		weight = 0.5,
-		value = 0,
-		script = ""
-	}
-	recordStore:Save()
-	
+
 end
 
 local function OnServerPostInit(eventStatus)
