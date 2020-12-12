@@ -995,21 +995,9 @@ mannequinNPC.remove = function(pid, refId, count, soul, charge, enchantmentCharg
 	Players[pid]:SaveInventory()
 end
 
-
-local split = function(s, delimiter)
-    result = {};
-    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
-        table.insert(result, match);
-    end
-    return result;
-end
-
 function mannequinNPC.OnObjectPlaceValidator(eventStatus, pid, cellDescription, objects)
 	
 	for i, object in pairs(objects) do
-		local temp = split(object.uniqueIndex, "-")
-        local RefNum = temp[1]
-		local MpNum = temp[2]
 		local refId = object.refId
 		
 		local itemSoul = tes3mp.GetObjectSoul(i-1)
