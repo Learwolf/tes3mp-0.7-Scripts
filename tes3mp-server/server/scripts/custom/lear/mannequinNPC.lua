@@ -710,6 +710,14 @@ mannequinNPC.addMannequinEquipment = function(pid)
 				end
 				LoadedCells[cell].data.objectData[tUniqueIndex].equipment = equipmentTransfer
 				
+				-- A particular server had an issue where Mannequins wouldn't equip items unless they were repaired.
+				-- This will make sure the equipment itself is fully repaired, but not the inventory item:
+				for slot,equipmentData in pairs(LoadedCells[cell].data.objectData[tUniqueIndex].equipment) do
+					if equipmentData.charge ~= nil then
+						equipmentData.charge = -1
+					end
+				end
+				
 				local plural = "items are"
 				if displayCount == 1 then
 					plural = "item is"
