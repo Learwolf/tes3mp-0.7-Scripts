@@ -330,8 +330,6 @@ end
 
 objectSpawnSystem.CheckForCellObjectSpawns = function(pid)
 	
-	local pushSave = false
-	
 	for cellId, oCellData in pairs(objectSpawnDB.spawnedObjectLocations) do
 		if LoadedCells[cellId] ~= nil and not LoadedCells[cellId].data.placedObjects then
 			
@@ -367,8 +365,6 @@ objectSpawnSystem.CheckForCellObjectSpawns = function(pid)
 					LoadedCells[cellId]:LoadContainers(pid, LoadedCells[cellId].data.objectData, {newUniqueIndex})
 				end
 				
-				pushSave = true
-				
 			end
 			
 			objectSpawnDB.spawnedObjectLocations[cellId] = replacementList
@@ -378,8 +374,7 @@ objectSpawnSystem.CheckForCellObjectSpawns = function(pid)
 			
 		end
 	end
-	
-	if pushSave then Save() end
+
 end
 
 
