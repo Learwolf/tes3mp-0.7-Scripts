@@ -483,12 +483,12 @@ CreatureSpawnSystem.distanceTooFarCreature = function(uniqueIndex)--, targetRefI
 			
 			table.insert(LoadedCells[cellId].data.packets.scale, newIndex)
 			
-			for index, visitorPid in pairs(LoadedCells[cellId].visitors) do
-			   if Players[visitorPid] ~= nil and Players[visitorPid]:IsLoggedIn() then
+			for pid, player in pairs(Players) do
+			   if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 					if LoadedCells[cellId] ~= nil then
-						LoadedCells[cellId]:LoadObjectsScaled(visitorPid, objectData, {newIndex})
+						LoadedCells[cellId]:LoadObjectsScaled(pid, objectData, {newIndex})
 						if config.useNpcBuffingScript == true then -- An additional script by me.
-							npcBuffing.CheckForRefIds(visitorPid, cellId)
+							npcBuffing.CheckForRefIds(pid, cellId) -- An additional script by me.
 						end
 					end
 				end
@@ -638,17 +638,19 @@ function checkCreatureSpawns()
 						
 						table.insert(LoadedCells[cellId].data.packets.scale, newIndex)
 						
-						for index, visitorPid in pairs(LoadedCells[cellId].visitors) do
-						   if Players[visitorPid] ~= nil and Players[visitorPid]:IsLoggedIn() then
+						for pid, player in pairs(Players) do
+						   if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 								if LoadedCells[cellId] ~= nil then
-									LoadedCells[cellId]:LoadObjectsScaled(visitorPid, objectData, {newIndex})
+									LoadedCells[cellId]:LoadObjectsScaled(pid, objectData, {newIndex})
 									if config.useNpcBuffingScript == true then -- An additional script by me.
-										npcBuffing.CheckForRefIds(visitorPid, cellId)
+										npcBuffing.CheckForRefIds(pid, cellId) -- An additional script by me.
 									end
 								end
 							end
 						end
+						
 					end
+					
 					
 				end
 				
@@ -1428,16 +1430,17 @@ CreatureSpawnSystem.SaveSpawnFunction = function(pid)
 		
 		table.insert(LoadedCells[cellId].data.packets.scale, newIndex)
 		
-		for index, visitorPid in pairs(LoadedCells[cellId].visitors) do
-		   if Players[visitorPid] ~= nil and Players[visitorPid]:IsLoggedIn() then
+		for pid, player in pairs(Players) do
+		   if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 				if LoadedCells[cellId] ~= nil then
-					LoadedCells[cellId]:LoadObjectsScaled(visitorPid, objectData, {newIndex})
+					LoadedCells[cellId]:LoadObjectsScaled(pid, objectData, {newIndex})
 					if config.useNpcBuffingScript == true then -- An additional script by me.
-						npcBuffing.CheckForRefIds(visitorPid, cellId)
+						npcBuffing.CheckForRefIds(pid, cellId) -- An additional script by me.
 					end
 				end
 			end
 		end
+		
 	end
 	
 	LoadedCells[cellId].data.entry.spawnSystemInitialized = true
