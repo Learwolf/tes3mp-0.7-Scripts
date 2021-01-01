@@ -1,6 +1,6 @@
 --[[
 	Quick Key Pages
-		version 1.00
+		version 1.01
 			by Learwolf
 	
 	Description:
@@ -16,11 +16,8 @@
 		
 	
 	Notes:
-		- There appears to be no way to prevent items being placed in containers without editing the core scripts. So to make things easy on 
-		  server owners, and avoid the need of editing core scripts, I have a built in method of removing the quick key page item from containers 
-		  they are placed in.
-		
-		- If a player loses their quick key pager, relogging will add it back to their inventory.
+		- Players are unable to drop their quick key pager, nor are they able to place them in any container.
+		- If a player somehow manages to lose their quick key pager, relogging will add it back to their inventory.
 	
 	
 	Install Instructions:
@@ -30,6 +27,15 @@
 				require("custom.quickKeyPages")
 		- Make sure there are no '--' characters infront of it (as that disables scripts).
 		- Save 'customScripts.lua' and relaunch your server.
+	
+	
+	Version History:
+		1.01 (1/1/2021)
+			- Players can no longer put the quick key pager into containers.
+			- Fixed a crash related to adding the quick key pager back to the players inventory.
+		
+		1.00 (12/30/2021)
+			- Initial public release.
 		
 --]]
 
@@ -412,7 +418,7 @@ customEventHooks.registerValidator("OnObjectPlace", function(eventStatus, pid, c
 			
 			if refId == qkcEmpty or refId == qkcNextPage then
 				tes3mp.MessageBox(pid, -1, "You cannot drop this item.")
-				playerItem.add(pid, refId, count)
+				givePlayerItem(pid, refId, count)
 				return customEventHooks.makeEventStatus(false, false)
 			end
 			
@@ -423,10 +429,83 @@ customEventHooks.registerValidator("OnObjectPlace", function(eventStatus, pid, c
 	return eventStatus
 end)
 
+local playerActivateTracking = {}
+local resolveContainerPlacement = function(pid)
 
-local dbug = function(pid, msg)
-	tes3mp.SendMessage(pid, color.Green .. msg .. "\n", false)
+	if playerActivateTracking[pid] ~= nil then
+		
+		local cellDescription = playerActivateTracking[pid].cellDescription
+		local uniqueIndex = playerActivateTracking[pid].uniqueIndex
+		
+		if LoadedCells[cellDescription] ~= nil and LoadedCells[cellDescription].data.objectData ~= nil then
+			local objData = LoadedCells[cellDescription].data.objectData[uniqueIndex]
+			if objData ~= nil and objData.inventory ~= nil then
+				local reloadForPlayers = false
+				local objectsToSearch = {qkcEmpty,qkcNextPage}
+				
+				for _,itemRefId in pairs(objectsToSearch) do
+					
+					if inventoryHelper.containsItem(objData.inventory, itemRefId) then
+						inventoryHelper.removeItem(objData.inventory,itemRefId,100) -- Could probably just be 1, but lets do 100 incase something weird happens.
+						reloadForPlayers = true
+					end
+				end
+				
+				if not inventoryHelper.containsItem(Players[pid].data.inventory, qkcNextPage) then
+					givePlayerItem(pid, qkcNextPage, 1) -- Lets assume, if the player doesnt have their page turn item, that its because of the above and we need to add it back.
+				end
+				
+				if reloadForPlayers then
+					local obj = LoadedCells[cellDescription].data.objectData
+					if obj[uniqueIndex] ~= nil and obj[uniqueIndex].inventory ~= nil then
+						for pid, player in pairs(Players) do
+							if Players[pid] ~= nil and player:IsLoggedIn() and LoadedCells[cellDescription] ~= nil then
+								LoadedCells[cellDescription]:LoadContainers(pid,obj,{uniqueIndex})
+							end
+						end
+					end
+				end
+			end
+		end
+	
+	end
 end
+
+customEventHooks.registerHandler("OnPlayerInventory", function(eventStatus, pid)
+	if not eventStatus.validCustomHandlers then return end
+	
+	local action = tes3mp.GetInventoryChangesAction(pid)
+	local itemChangesCount = tes3mp.GetInventoryChangesSize(pid)
+	
+	local logToServer = false
+
+	for index = 0, itemChangesCount - 1 do
+		local itemRefId = tes3mp.GetInventoryItemRefId(pid, index)
+
+		if itemRefId ~= "" then
+		
+			local item = {
+				refId = itemRefId,
+				count = tes3mp.GetInventoryItemCount(pid, index),
+				charge = tes3mp.GetInventoryItemCharge(pid, index),
+				enchantmentCharge = tes3mp.GetInventoryItemEnchantmentCharge(pid, index),
+				soul = tes3mp.GetInventoryItemSoul(pid, index)
+			}
+			
+			if item.refId == qkcNextPage then
+				
+				if action == enumerations.inventory.REMOVE then
+					
+					resolveContainerPlacement(pid)
+					
+					return customEventHooks.makeEventStatus(false, false)
+				end
+				
+			end
+		end
+	end
+	
+end)
 
 -- Since there is no way to edit the prevention of placing items in containers with editing core scripts, here is a work around:
 customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid, cellDescription, objects, players)
@@ -443,31 +522,8 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
 				local objData = LoadedCells[cellDescription].data.objectData[uniqueIndex]
 				if objData ~= nil and objData.inventory ~= nil then
 					
-					local reloadForPlayers = false
-					local objectsToSearch = {qkcEmpty,qkcNextPage}
-					
-					for _,itemRefId in pairs(objectsToSearch) do
-						
-						if inventoryHelper.containsItem(objData.inventory, itemRefId) then
-							inventoryHelper.removeItem(objData.inventory,itemRefId,100) -- Could probably just be 1, but lets do 100 incase something weird happens.
-							reloadForPlayers = true
-						end
-					end
-					
-					if not inventoryHelper.containsItem(Players[pid].data.inventory, qkcNextPage) then
-						givePlayerItem(pid, qkcNextPage, 1) -- Lets assume, if the player doesnt have their page turn item, that its because of the above and we need to add it back.
-					end
-					
-					if reloadForPlayers then
-						local obj = LoadedCells[cellDescription].data.objectData
-						if obj[uniqueIndex] ~= nil and obj[uniqueIndex].inventory ~= nil then
-							for pid, player in pairs(Players) do
-								if Players[pid] ~= nil and player:IsLoggedIn() and LoadedCells[cellDescription] ~= nil then
-									LoadedCells[cellDescription]:LoadContainers(pid,obj,{uniqueIndex})
-								end
-							end
-						end
-					end
+					playerActivateTracking[pid] = { cellDescription = cellDescription, uniqueIndex = uniqueIndex }
+					resolveContainerPlacement(pid)
 					
 				end
 			end
