@@ -10,7 +10,7 @@
 		itemInfo.lua
 
 2) Add the following to customScripts.lua: 
-		require("custom.itemInfo")
+		itemInfo = require("custom.itemInfo")
 
 3) Save this file inside your tes3mp-server/server/scripts/custom folder as:
 		salesChest.lua
