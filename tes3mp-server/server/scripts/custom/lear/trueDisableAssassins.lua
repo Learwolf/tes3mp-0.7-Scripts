@@ -17,14 +17,6 @@ DO NOT EDIT BEYOND THIS, UNLESS YOU KNOW WHAT YOU'RE DOING.
 
 local Methods = {}
 
-local split = function(s, delimiter)
-    result = {};
-    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
-        table.insert(result, match);
-    end
-    return result;
-end
-
 local listOfBeds = { 
 "active_de_r_bed_02",
 "active_de_p_bed_28",
@@ -71,7 +63,6 @@ local listOfBeds = {
 "active_de_bedroll"
  }
 
-
 customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid, cellDescription, objects, players)
 	local name = Players[pid].name:lower()
 	local cell = LoadedCells[cellDescription]
@@ -80,10 +71,6 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
 
     for n,object in pairs(objects) do
 	
-        local temp = split(object["uniqueIndex"], "-")
-        local RefNum = temp[1]
-        local MpNum = temp[2]
-		
 		for id, bedObject in pairs(listOfBeds) do
 			if object.refId == bedObject then	
 				
@@ -113,14 +100,13 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
 									logicHandler.RunConsoleCommandOnPlayer(pid, "Journal TR_DBAttack 10")
 									Players[pid].data.customVariables.lear.questFixes.dbAttackCheck = 1
 								end
-							else
-								return
 							end
-						else
-							logicHandler.RunConsoleCommandOnPlayer(pid, "stopscript dbAttackScript")
 						end
 					end
 				end
+				
+				break
+				
 			end
 		end
 
