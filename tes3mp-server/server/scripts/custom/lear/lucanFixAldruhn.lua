@@ -32,10 +32,17 @@ customEventHooks.registerHandler("OnPlayerAuthentified", function(eventStatus, p
 	Methods.StopLucanOstoriusScript(pid)
 end)
 
+local hasQuest = function(pid, qId, qIndex)
+	if tableHelper.containsKeyValuePairs(Players[pid].data.journal, { quest = qId, index = qIndex }, true) then
+		return true
+	end
+	return false
+end
+
 customEventHooks.registerHandler("OnPlayerCellChange", function(eventStatus, pid, previousCellDescription, currentCellDescription)
 -- Delete Lucan respawn
 	if currentCellDescription == "-2, 6" then
-		if (tableHelper.containsKeyValuePairs(Players[pid].data.journal, { quest = "mv_thieftrader", index = 20 }, true) or tableHelper.containsKeyValuePairs(Players[pid].data.journal, { quest = "mv_thieftrader", index = 25 }, true)) and not tableHelper.containsKeyValuePairs(Players[pid].data.journal, { quest = "mv_thieftrader", index = 90 }, true) then
+		if (hasQuest(pid, "mv_thieftrader", 20) or hasQuest(pid, "mv_thieftrader", 25)) and not hasQuest(pid, "mv_thieftrader", 90) then
 			if (Players[pid].data.customVariables.lear.questFixes.mv_thieftrader_spawn_timer == nil or os.time() >= Players[pid].data.customVariables.lear.questFixes.mv_thieftrader_spawn_timer) then
 				logicHandler.RunConsoleCommandOnPlayer(pid, "startscript lucan_ostorius")
 				local respawnTimer = lucanFixAldruhnConfig.respawnTimer
