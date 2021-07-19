@@ -49,7 +49,7 @@ local pushFollowerAiEffect = function(pid, uniqueIndex, refId)
 end
 
 local hasQIndex = function(pid, qId, qIndex)
-	if Players[pid].data.journal ~= nil and tableHelper.containsKeyValuePairs(Players[pid].data.journal, { quest = qId, index = qIndex }, true)
+	if Players[pid].data.journal ~= nil and tableHelper.containsKeyValuePairs(Players[pid].data.journal, { quest = qId, index = qIndex }, true) then
 		return true
 	end
 	return false
@@ -57,7 +57,7 @@ end
 
 customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid, cellDescription, objects, players)
 	
-	if Players[pid] ~= nil and Players[pid]:IsLoggedIn()
+	if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 	
 		local cell = LoadedCells[cellDescription]
 		local isValid = eventStatus.validDefaultHandler
