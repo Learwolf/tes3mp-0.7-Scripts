@@ -50,7 +50,7 @@ local estatePosition = 1
 -- load the json file with all the data
 startupData = {}
 Methods.Initialize = function()
-	startupData = jsonInterface.load("startupData.json")
+	startupData = jsonInterface.load("custom/startupData.json")
 end
 
 --Call all of the functions when player logs in, run the startup scripts if conditions are met
