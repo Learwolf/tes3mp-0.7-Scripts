@@ -1395,7 +1395,7 @@
             },
             "Sadrith Mora, Dirty Muriel's Cornerclub":{
                 "outcome1":"\"tenyeminwe\"->disable",
-                "outcome2":"\"tenyeminwe\"->natalinus flavonius"
+                "outcome2":"\"natalinus flavonius\"->disable"
             },
             "Sadrith Mora, Tel Naga Great Hall":{
                 "outcome1":"\"galmir\"->disable",

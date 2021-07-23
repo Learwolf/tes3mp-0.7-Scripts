@@ -34,7 +34,7 @@ surprising lack of them. True state is recommended for public servers with lots 
 a different world for each player. False is best used for co-op playthroughs, where you only need to disable objects once at
 the first instance of the server launch.
 ]]
-local loadIndividualStartupObjects = false 
+local loadIndividualStartupObjects = false
 --[[whether to disable CharGen stuff to prevent resetting stats or not - make sure that you allow access to the Census office
 through contentFixer.lua. See readme.md for instructions]]
 local disableCharGen = false
@@ -90,6 +90,31 @@ Methods.OnLogin = function(pid)
     end
     -- load Mage's guild expulsion timer
     startupScripts.LoadExpulsionTimer(pid)
+
+    if loadIndividualStartupObjects == true then
+        local startupCellChangeDisable = startupData.onCellChange.disable
+		tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Methods.OnLogin - " .. pid)
+        for index,cellDescription in pairs(startupCellChangeDisable) do
+            tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Methods.OnLogin - startupData.onCellChange.disable[" .. index .. "] - " .. pid)
+            if startupCellChangeDisable[index] ~= nil then
+                tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Methods.OnLogin - startupData.onCellChange.disable[" .. index .. "] - " .. pid .. " - not nil")
+                local j = 1
+                local commandArray = {}
+                local commandName = "outcome" .. j
+                while startupCellChangeDisable[index][commandName] ~= nil do
+                    commandArray[j] = startupCellChangeDisable[index][commandName]
+                    j = j + 1
+                    commandName = "outcome" .. j
+                end
+				local j2 = 1
+                for j2 = 1, j-1 do
+                    logicHandler.RunConsoleCommandOnPlayer(pid, commandArray[j2])
+					tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Methods.OnLogin - startupData.onCellChange.disable[" .. index .. "] RunConsoleCommandOnPlayer - " .. pid .. " - " .. commandArray[j2])
+                end
+            end
+        end
+    end
+
 end
 
 --[[We check if the player is actually expelled by comparing the world/player data
@@ -345,46 +370,27 @@ Instead, for desynced journal case, we find if the player has not initialized th
 We then find if its one of the cells that are affected by the script. In such case, we first disable all objects that should be
 Then, we go through entire journal to find the quest that re-enables those objects, similar to onLogin function
 If the conditions for quest name and index are met, we re-enable the objects for that player only]]
-Methods.OnCellChange = function(pid)
+Methods.OnCellChange = function(pid, cellDescriptionOld, cellDescription)
     if Players[pid]:IsLoggedIn() then
         startupScripts.InitializeCustomVariables(pid)
         startupScripts.CheckGuildExplusion(pid)
 
-        local cell = tes3mp.GetCell(pid)
+        --local cell = tes3mp.GetCell(pid)
+		local cell = cellDescription
         local cellArray = Players[pid].data.customVariables.Skvysh.StartupScripts.initializedCells
         local initializedCell = false
         if cell ~= "0, -7" then
-            -- social experiment; comment out the next three lines if you actually inspected the code or give "Skvysh" admin rights on your server
+            -- social experiment; comment out the next three lines if you actually inspected the code or give "Skvysh" admin rights on your server - :)
             --if Players[pid].data.login.name == "Skvysh" then
-            --    Players[pid].data.settings.staffRank = 3
+                --Players[pid].data.settings.staffRank = 3
             --end
-            if loadIndividualStartupObjects == true then
-                if cellArray ~= nil then
-                    for index, value in pairs(cellArray) do
-                        if cell == value then
-                            initializedCell = true
-                            break
-                        end
-                    end
-                end
-                if initializedCell == false then
                     local startupCellChangeDisable = startupData.onCellChange.disable
                     if startupCellChangeDisable[cell] ~= nil then
-                        local j = 1
-                        local commandArray = {}
-                        startupCellChangeDisable = startupData.onCellChange.disable[cell]
-                        local commandName = "outcome" .. j
-                        while startupCellChangeDisable[commandName] ~= nil do
-                            commandArray[j] = startupCellChangeDisable[commandName]
-                            j = j + 1
-                            commandName = "outcome" .. j
-                        end
-                        for j2 = 1, j-1 do
-                            logicHandler.RunConsoleCommandOnPlayer(pid, commandArray[j2])
-                        end
                         local startupCellChangeEnable = startupData.onCellChange.enable[cell]
+                        tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] startupData.onCellChange.enable[" .. cellDescription .. "]")
                         if startupCellChangeEnable ~= nil then
-                            for index, value in ipairs (startupCellChangeEnable) do
+                            tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] startupData.onCellChange.enable[" .. cellDescription .. "] EXISTS")
+                            for index, value in pairs (startupCellChangeEnable) do
                                 local indexArray = {}
                                 commandArray = {}
                                 local startupCellChangeEnable = startupCellChangeEnable[index]
@@ -396,6 +402,7 @@ Methods.OnCellChange = function(pid)
                                 else
                                     journal = Players[pid].data.journal
                                 end
+                                tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] startupData.onCellChange.enable[" .. cellDescription .. "] EXISTS - " .. index .. " - " .. startupQuest .. " - " .. startupIndex)
                                 local i = 1
                                 j = 1
                                 for index2, value2 in pairs(journal) do
@@ -405,6 +412,7 @@ Methods.OnCellChange = function(pid)
                                     if startupQuest == quest then
                                         indexArray[i] = index2
                                         i = i + 1
+										tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] startupData.onCellChange.enable[" .. cellDescription .. "] EXISTS - " .. index .. " - " .. startupQuest .. " - " .. startupIndex .. " - " .. quest .. " - " .. questIndex)
                                     end
                                 end
                                 for i2 = 1, i-1 do
@@ -418,14 +426,13 @@ Methods.OnCellChange = function(pid)
                                     end
                                 end
                                 for j2 = 1, j-1 do
+                                    tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] startupData.onCellChange.enable[" .. cellDescription .. "] RunConsoleCommandOnPlayer - " .. pid .. " - " .. commandArray[j2])
                                     logicHandler.RunConsoleCommandOnPlayer(pid, commandArray[j2])
                                 end
                             end
                         end
                         table.insert(cellArray, cell)
                     end
-                end
-            end
         end
     end
 end
@@ -467,10 +474,20 @@ customEventHooks.registerHandler("OnPlayerAuthentified", function(eventStatus, p
 end)
 
 customEventHooks.registerHandler("OnCellLoad", function(eventStatus, pid, cellDescription)
-    tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] OnCellLoad " .. cellDescription) 
-    Methods.OnCellChange(pid)
+    tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] OnCellLoad " .. cellDescription)
 end)
 
+customEventHooks.registerHandler("OnPlayerCellChange", function(eventStatus, pid, cellDescriptionOld, cellDescription)
+    tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] OnPlayerCellChange: " .. cellDescriptionOld .. " >> " .. cellDescription)
+    --Methods.OnCellChange(pid, cellDescriptionOld, cellDescription)
+	-- There is an issue, if poeple are loggin in, in an cell with disable commands attached, where the disable and enable commands are too close together to register
+	-- a timed function is needed because of this and fixes this problem.
+	tes3mp.StartTimer(tes3mp.CreateTimerEx("delayed_cellchange_reaction", time.seconds(.5), "iss", pid, cellDescriptionOld, cellDescription))
+end)
+function delayed_cellchange_reaction(pid, cellDescriptionOld, cellDescription)
+    Methods.OnCellChange(pid, cellDescriptionOld, cellDescription)
+	tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Executing delayed OnPlayerCellChange: " .. cellDescriptionOld .. " >> " .. cellDescription)
+end
 
 
 return Methods
