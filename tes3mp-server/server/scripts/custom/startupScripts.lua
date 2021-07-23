@@ -477,6 +477,64 @@ customEventHooks.registerHandler("OnCellLoad", function(eventStatus, pid, cellDe
     tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] OnCellLoad " .. cellDescription)
 end)
 
+customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid, cellDescription, objects, players)
+    tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] OnObjectActivate " - " .. pid .. " - " .. cellDescription)
+    local name = Players[pid].name:lower()
+    local cell = LoadedCells[cellDescription]
+    local isValid = eventStatus.validDefaultHandler
+
+    for n,object in pairs(objects) do
+        local objectUniqueIndex = object.uniqueIndex
+        local objectRefId = object.refId
+        if objectRefId == "divayth fyr" then
+            -- remove corprus if player is still infected and corprus cure quest is done
+            local journal
+            if config.shareJournal == true then
+                journal = WorldInstance.data.journal
+            else
+                journal = Players[pid].data.journal
+            end
+            for index2, value2 in pairs(journal) do
+                local journalEntry = journal[index2]
+                local quest = journalEntry.quest
+                local questIndex = journalEntry.index
+                tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] OnObjectActivate [" .. objectRefId .. "] check - " .. quest .. " - " .. questIndex)
+                if quest == "a2_3_corpruscure" and questIndex == 50 then
+                    local spellbookindex = tes3mp.GetSpellbookChangesSize(pid)
+                    while spellbookindex > 0 do
+                        local spellid = tes3mp.GetSpellId(pid, spellbookindex)
+                        tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Player enumerate SpellBook [" .. pid .. "] >> " .. spellid .. " at index " .. spellbookindex)
+                        if(spellid == "corprus") then
+                            tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Player infected with corprus found [" .. pid .. "] >> " .. spellid .. " at index " .. spellbookindex)
+                            --logicHandler.RunConsoleCommandOnPlayer(pid, "player->RemoveEffects \"corprus\"")
+                            --logicHandler.RunConsoleCommandOnPlayer(pid, "player->AddSpell \"common disease immunity\"")
+                            --logicHandler.RunConsoleCommandOnPlayer(pid, "player->AddSpell \"blight disease immunity\"")
+                            --logicHandler.RunConsoleCommandOnPlayer(pid, "player->AddSpell \"corprus immunity\"")
+					        tes3mp.CustomMessageBox(pid, -1, "You corprus curse has been transformed", "Thank you, my lord and saviour!")
+                            tes3mp.ClearSpellbookChanges(pid)
+                            tes3mp.SetSpellbookChangesAction(pid, 2) -- remove spell
+                            tes3mp.AddSpell(pid, "corprus")
+                            tes3mp.SendSpellbookChanges(pid, false, false)
+                            tes3mp.ClearSpellbookChanges(pid)
+                            tes3mp.SetSpellbookChangesAction(pid, 1) -- add spell
+                            tes3mp.AddSpell(pid, "common disease immunity")
+                            tes3mp.AddSpell(pid, "blight disease immunity")
+                            tes3mp.AddSpell(pid, "corprus immunity")
+                            tes3mp.SendSpellbookChanges(pid, false, false)
+                            spellbookindex = 0
+                            tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Message sent, corprus cured and immunities added  [" .. pid .. "]")
+                        end
+                        spellbookindex = spellbookindex - 1
+                    end
+                end
+            end
+        end
+        if objectRefId == "dagoth gares" then
+            --placeholder to give player corprus if not owned/cured upon interactin with dagoth gares corpse
+        end
+    end
+end)
+
 customEventHooks.registerHandler("OnPlayerCellChange", function(eventStatus, pid, cellDescriptionOld, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] OnPlayerCellChange: " .. cellDescriptionOld .. " >> " .. cellDescription)
     --Methods.OnCellChange(pid, cellDescriptionOld, cellDescription)
