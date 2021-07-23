@@ -1,0 +1,27 @@
+-- Load up your custom scripts here! Ideally, your custom scripts will be placed in the scripts/custom folder and then get loaded like this:
+--
+-- require("custom/yourScript")
+--
+-- Refer to the Tutorial.md file for information on how to use various event and command hooks in your scripts.
+
+-- startupScripts = require("custom.startupScripts")
+-- require("custom.lear.creatureMerchantRestockGold")
+-- require("custom.lear.cursedItemsFix")
+-- require("custom.lear.dailyLoginRewards")
+-- require("custom.lear.followerQuestFixes")
+-- require("custom.lear.lucanFixAldruhn")
+-- require("custom.lear.mailSystem")
+-- require("custom.lear.mannequinNPC")
+-- require("custom.lear.modActionMenu")
+-- require("custom.lear.npcBuffing")
+-- require("custom.lear.objectSpawnSystem")
+-- require("custom.lear.pouches")
+-- require("custom.lear.prematureCorpusFix")
+-- require("custom.lear.questFixes")
+-- require("custom.lear.quickKeyPages")
+-- require("custom.lear.salesChest")
+-- require("custom.lear.spawnSystem")
+-- require("custom.lear.starterItems")
+-- require("custom.lear.support")
+-- require("custom.lear.trueDisableAssassins")
+-- require("custom.lear.webspinnerFix")
