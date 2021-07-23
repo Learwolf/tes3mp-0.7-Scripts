@@ -72,6 +72,23 @@ Methods.OnLogin = function(pid)
         Players[pid].data.customVariables.Skvysh.StartupScripts.expulsionPrevious = false
         Players[pid].data.customVariables.Skvysh.StartupScripts.expulsionDay = 0
     end
+    -- Apply corprus cure if needed
+    if Players[pid].data.customVariables.Skvysh.StartupScripts.applyCorprusCure == nil then
+        Players[pid].data.customVariables.Skvysh.StartupScripts.applyCorprusCure = false
+    elseif Players[pid].data.customVariables.Skvysh.StartupScripts.applyCorprusCure == true then
+        tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Player infected with corprus logged in [" .. pid .. "] - applyCorprusCure is true")
+        tes3mp.ClearSpellbookChanges(pid)
+        tes3mp.SetSpellbookChangesAction(pid, 2) -- remove spell
+        tes3mp.AddSpell(pid, "corprus")
+        tes3mp.SendSpellbookChanges(pid, false, false)
+        tes3mp.ClearSpellbookChanges(pid)
+        tes3mp.SetSpellbookChangesAction(pid, 1) -- add spell
+        tes3mp.AddSpell(pid, "common disease immunity")
+        tes3mp.AddSpell(pid, "blight disease immunity")
+        tes3mp.AddSpell(pid, "corprus immunity")
+        tes3mp.SendSpellbookChanges(pid, false, false)
+        tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Corprus cured and immunities added  [" .. pid .. "]")
+    end
     if baseWorldInitialized == false then
         if loadIndividualStartupObjects == false then
             logicHandler.RunConsoleCommandOnPlayer(pid, "Startscript, Startup")
@@ -478,7 +495,7 @@ customEventHooks.registerHandler("OnCellLoad", function(eventStatus, pid, cellDe
 end)
 
 customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid, cellDescription, objects, players)
-    tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] OnObjectActivate " - " .. pid .. " - " .. cellDescription)
+    tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] OnObjectActivate  - " .. pid .. " - " .. cellDescription)
     local name = Players[pid].name:lower()
     local cell = LoadedCells[cellDescription]
     local isValid = eventStatus.validDefaultHandler
@@ -500,17 +517,17 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
                 local questIndex = journalEntry.index
                 tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] OnObjectActivate [" .. objectRefId .. "] check - " .. quest .. " - " .. questIndex)
                 if quest == "a2_3_corpruscure" and questIndex == 50 then
-                    local spellbookindex = tes3mp.GetSpellbookChangesSize(pid)
+                    spellbookindex = tes3mp.GetSpellbookChangesSize(pid)
                     while spellbookindex > 0 do
                         local spellid = tes3mp.GetSpellId(pid, spellbookindex)
                         tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Player enumerate SpellBook [" .. pid .. "] >> " .. spellid .. " at index " .. spellbookindex)
                         if(spellid == "corprus") then
-                            tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Player infected with corprus found [" .. pid .. "] >> " .. spellid .. " at index " .. spellbookindex)
                             --logicHandler.RunConsoleCommandOnPlayer(pid, "player->RemoveEffects \"corprus\"")
                             --logicHandler.RunConsoleCommandOnPlayer(pid, "player->AddSpell \"common disease immunity\"")
                             --logicHandler.RunConsoleCommandOnPlayer(pid, "player->AddSpell \"blight disease immunity\"")
                             --logicHandler.RunConsoleCommandOnPlayer(pid, "player->AddSpell \"corprus immunity\"")
-					        tes3mp.CustomMessageBox(pid, -1, "You corprus curse has been transformed", "Thank you, my lord and saviour!")
+                            tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Player infected with corprus found [" .. pid .. "] >> " .. spellid .. " at index " .. spellbookindex)
+                            tes3mp.CustomMessageBox(pid, -1, "You corprus curse has been transformed", "Thank you, my lord and saviour!")
                             tes3mp.ClearSpellbookChanges(pid)
                             tes3mp.SetSpellbookChangesAction(pid, 2) -- remove spell
                             tes3mp.AddSpell(pid, "corprus")
@@ -522,10 +539,12 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
                             tes3mp.AddSpell(pid, "corprus immunity")
                             tes3mp.SendSpellbookChanges(pid, false, false)
                             spellbookindex = 0
+                            Players[pid].data.customVariables.Skvysh.StartupScripts.applyCorprusCure = true
                             tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Message sent, corprus cured and immunities added  [" .. pid .. "]")
                         end
                         spellbookindex = spellbookindex - 1
                     end
+                    break
                 end
             end
         end
