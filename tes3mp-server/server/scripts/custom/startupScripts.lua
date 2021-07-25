@@ -483,7 +483,43 @@ customEventHooks.registerHandler("OnServerPostInit", function(eventStatus)
     tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Init.") 
     Methods.Initialize()
     Methods.RunStartup()
+	timed_journalchecks_5min()  -- timed function to check spefic quest states where time has to pass, because integrated time sync does not advance the quest timer (should be compatible without issues, if this is ever fixed in future updates of tes3mp)
 end)
+function timed_journalchecks_5min()
+    tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Executing timed_journalchecks_5min")
+    --tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] ".. dump(Players))
+    for pid, Player in pairs(Players) do
+        local journal
+        if config.shareJournal == true then
+            journal = WorldInstance.data.journal
+        else
+            journal = Players[Player].data.journal
+        end
+        local highest_index_a2_6_incarnate = { ["index"] = 0 }
+        for index2, value2 in pairs(journal) do
+            local journalEntry = journal[index2]
+            local quest = journalEntry.quest
+            local questIndex = journalEntry.index
+            --tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] " .. quest .. " - " .. questIndex .. " - " .. journalEntry.timestamp["daysPassed"] .. " - " .. WorldInstance.data.time.daysPassed)
+            if quest == "a2_6_incarnate" and questIndex > highest_index_a2_6_incarnate.index then
+                highest_index_a2_6_incarnate = journalEntry
+            end
+        end
+        if highest_index_a2_6_incarnate.index == 1 and WorldInstance.data.time.daysPassed - highest_index_a2_6_incarnate.timestamp.daysPassed >= 2 then -- check "if moons have come and gone"
+            if Player:IsLoggedIn() then
+                tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] quest: a2_6_incarnate - moons have come and gone, advancing quest for " .. Player.pid .. " - because highest_index_a2_6_incarnate.index = " .. highest_index_a2_6_incarnate.index)
+                logicHandler.RunConsoleCommandOnPlayer(Player.pid, "Journal a2_6_incarnate 3") -- AddJournal not permanent??? :( - using command on player instead
+                --tes3mp.ClearJournalChanges(Player.pid)
+                --tes3mp.AddJournalEntryWithTimestamp(Player.pid, "a2_6_incarnate", 3, "Nibani Maesa", WorldInstance.data.time.daysPassed, WorldInstance.data.time.month, WorldInstance.data.time.day)
+                --tes3mp.SendJournalChanges(Player.pid, true, false)
+                if config.shareJournal == true then
+                    break
+                end
+            end
+        end
+    end
+    tes3mp.StartTimer(tes3mp.CreateTimer("timed_journalchecks_5min", time.seconds(300)))
+end
 
 customEventHooks.registerHandler("OnPlayerAuthentified", function(eventStatus, pid)
     tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] OnPlayerAuthentified " .. Players[pid].name) 
@@ -547,9 +583,30 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
                     break
                 end
             end
-        end
-        if objectRefId == "dagoth gares" then
+        elseif objectRefId == "dagoth gares" then
             --placeholder to give player corprus if not owned/cured upon interactin with dagoth gares corpse
+        elseif objectRefId == "nibani maesa" then -- advance a2_6_incarnate on interaction with npc, because for the npc no real time has passed
+            if config.shareJournal == true then
+                journal = WorldInstance.data.journal
+            else
+                journal = Players[pid].data.journal -- not implenented
+            end
+            local highest_index_a2_6_incarnate = { ["index"] = 0 }
+            for index2, value2 in pairs(journal) do
+                local journalEntry = journal[index2]
+                local quest = journalEntry.quest
+                local questIndex = journalEntry.index
+                if quest == "a2_6_incarnate" and questIndex > highest_index_a2_6_incarnate.index then
+                    highest_index_a2_6_incarnate = journalEntry
+                end
+            end
+            if highest_index_a2_6_incarnate.index == 3 then -- check "if moons have come and gone"
+                tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] quest: a2_6_incarnate - moons have come and gone, advancing quest for " .. pid .. " - because highest_index_a2_6_incarnate.index = " .. highest_index_a2_6_incarnate.index)
+                logicHandler.RunConsoleCommandOnPlayer(pid, "Journal a2_6_incarnate 5") -- AddJournal not permanent??? :( - using command on player instead
+                --tes3mp.ClearJournalChanges(.pid)
+                --tes3mp.AddJournalEntryWithTimestamp(pid, "a2_6_incarnate", 5, "Nibani Maesa", WorldInstance.data.time.daysPassed, WorldInstance.data.time.month, WorldInstance.data.time.day)
+                --tes3mp.SendJournalChanges(pid, true, false)
+            end
         end
     end
 end)
