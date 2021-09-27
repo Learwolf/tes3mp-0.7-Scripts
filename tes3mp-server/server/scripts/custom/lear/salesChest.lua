@@ -10,7 +10,7 @@
 		itemInfo.lua
 
 2) Add the following to customScripts.lua: 
-		itemInfo = require("custom.itemInfo")
+		require("custom.itemInfo")
 
 3) Save this file inside your tes3mp-server/server/scripts/custom folder as:
 		salesChest.lua
@@ -186,7 +186,7 @@ end
 
 function GetContainerInventory(chest)
 	if LoadedCells[chest.cell] == nil then
-		myMod.LoadCell(chest.cell)
+		logicHandler.LoadCell(chest.cell)
 	end
 	local ref = LoadedCells[chest.cell].data.objectData[chest.refIndex]	
 	
@@ -422,7 +422,7 @@ end)
 
 CheckChestExists = function(chest, pid)
 	if LoadedCells[chest.cell] == nil then
-		myMod.LoadCell(chest.cell)
+		logicHandler.LoadCell(chest.cell)
 	end
 	if LoadedCells[chest.cell]:ContainsObject(chest.refIndex) and not tableHelper.containsValue(LoadedCells[chest.cell].data.packets.delete, chest.refIndex)
 	then
