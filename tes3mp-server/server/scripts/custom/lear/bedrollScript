@@ -72,7 +72,7 @@ customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid
 			local objectUniqueIndex = object.uniqueIndex
 			local objectRefId = object.refId
 			
-			if objectRefId ~= nil and objectRefId == "player_bedroll" then
+			if objectRefId ~= nil and objectRefId == bedrollRefId then
 				isValid = bedRollFunction(pid)
 			end
 			
