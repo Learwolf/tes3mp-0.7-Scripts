@@ -114,6 +114,10 @@ end)
 local newResurrectFunction = function(pid)
 	
 	local player = Players[pid].data.customVariables.bedRespawnPoint
+	
+	tes3mp.SetCell(pid, player.cellDescription)
+	tes3mp.SendCell(pid)
+		
 	tes3mp.SetPos(pid, player.posX, player.posY, player.posZ)
     tes3mp.SetRot(pid, player.rotX, player.rotZ)
     tes3mp.SendPos(pid)
