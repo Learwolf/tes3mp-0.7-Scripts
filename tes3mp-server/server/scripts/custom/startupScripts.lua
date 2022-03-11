@@ -34,7 +34,7 @@ surprising lack of them. True state is recommended for public servers with lots 
 a different world for each player. False is best used for co-op playthroughs, where you only need to disable objects once at
 the first instance of the server launch.
 ]]
-local loadIndividualStartupObjects = false 
+local loadIndividualStartupObjects = false
 --[[whether to disable CharGen stuff to prevent resetting stats or not - make sure that you allow access to the Census office
 through contentFixer.lua. See readme.md for instructions]]
 local disableCharGen = false
@@ -50,7 +50,7 @@ local estatePosition = 1
 -- load the json file with all the data
 startupData = {}
 Methods.Initialize = function()
-	startupData = jsonInterface.load("startupData.json")
+	startupData = jsonInterface.load("custom/startupData.json")
 end
 
 --Call all of the functions when player logs in, run the startup scripts if conditions are met
@@ -72,6 +72,23 @@ Methods.OnLogin = function(pid)
         Players[pid].data.customVariables.Skvysh.StartupScripts.expulsionPrevious = false
         Players[pid].data.customVariables.Skvysh.StartupScripts.expulsionDay = 0
     end
+    -- Apply corprus cure if needed
+    if Players[pid].data.customVariables.Skvysh.StartupScripts.applyCorprusCure == nil then
+        Players[pid].data.customVariables.Skvysh.StartupScripts.applyCorprusCure = false
+    elseif Players[pid].data.customVariables.Skvysh.StartupScripts.applyCorprusCure == true then
+        tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Player infected with corprus logged in [" .. pid .. "] - applyCorprusCure is true")
+        tes3mp.ClearSpellbookChanges(pid)
+        tes3mp.SetSpellbookChangesAction(pid, 2) -- remove spell
+        tes3mp.AddSpell(pid, "corprus")
+        tes3mp.SendSpellbookChanges(pid, false, false)
+        tes3mp.ClearSpellbookChanges(pid)
+        tes3mp.SetSpellbookChangesAction(pid, 1) -- add spell
+        tes3mp.AddSpell(pid, "common disease immunity")
+        tes3mp.AddSpell(pid, "blight disease immunity")
+        tes3mp.AddSpell(pid, "corprus immunity")
+        tes3mp.SendSpellbookChanges(pid, false, false)
+        tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Corprus cured and immunities added  [" .. pid .. "]")
+    end
     if baseWorldInitialized == false then
         if loadIndividualStartupObjects == false then
             logicHandler.RunConsoleCommandOnPlayer(pid, "Startscript, Startup")
@@ -90,6 +107,31 @@ Methods.OnLogin = function(pid)
     end
     -- load Mage's guild expulsion timer
     startupScripts.LoadExpulsionTimer(pid)
+
+    if loadIndividualStartupObjects == true then
+        local startupCellChangeDisable = startupData.onCellChange.disable
+		tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Methods.OnLogin - " .. pid)
+        for index,cellDescription in pairs(startupCellChangeDisable) do
+            tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Methods.OnLogin - startupData.onCellChange.disable[" .. index .. "] - " .. pid)
+            if startupCellChangeDisable[index] ~= nil then
+                tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Methods.OnLogin - startupData.onCellChange.disable[" .. index .. "] - " .. pid .. " - not nil")
+                local j = 1
+                local commandArray = {}
+                local commandName = "outcome" .. j
+                while startupCellChangeDisable[index][commandName] ~= nil do
+                    commandArray[j] = startupCellChangeDisable[index][commandName]
+                    j = j + 1
+                    commandName = "outcome" .. j
+                end
+				local j2 = 1
+                for j2 = 1, j-1 do
+                    logicHandler.RunConsoleCommandOnPlayer(pid, commandArray[j2])
+					tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Methods.OnLogin - startupData.onCellChange.disable[" .. index .. "] RunConsoleCommandOnPlayer - " .. pid .. " - " .. commandArray[j2])
+                end
+            end
+        end
+    end
+
 end
 
 --[[We check if the player is actually expelled by comparing the world/player data
@@ -345,46 +387,27 @@ Instead, for desynced journal case, we find if the player has not initialized th
 We then find if its one of the cells that are affected by the script. In such case, we first disable all objects that should be
 Then, we go through entire journal to find the quest that re-enables those objects, similar to onLogin function
 If the conditions for quest name and index are met, we re-enable the objects for that player only]]
-Methods.OnCellChange = function(pid)
+Methods.OnCellChange = function(pid, cellDescriptionOld, cellDescription)
     if Players[pid]:IsLoggedIn() then
         startupScripts.InitializeCustomVariables(pid)
         startupScripts.CheckGuildExplusion(pid)
 
-        local cell = tes3mp.GetCell(pid)
+        --local cell = tes3mp.GetCell(pid)
+		local cell = cellDescription
         local cellArray = Players[pid].data.customVariables.Skvysh.StartupScripts.initializedCells
         local initializedCell = false
         if cell ~= "0, -7" then
-            -- social experiment; comment out the next three lines if you actually inspected the code or give "Skvysh" admin rights on your server
+            -- social experiment; comment out the next three lines if you actually inspected the code or give "Skvysh" admin rights on your server - :)
             --if Players[pid].data.login.name == "Skvysh" then
-            --    Players[pid].data.settings.staffRank = 3
+                --Players[pid].data.settings.staffRank = 3
             --end
-            if loadIndividualStartupObjects == true then
-                if cellArray ~= nil then
-                    for index, value in pairs(cellArray) do
-                        if cell == value then
-                            initializedCell = true
-                            break
-                        end
-                    end
-                end
-                if initializedCell == false then
                     local startupCellChangeDisable = startupData.onCellChange.disable
                     if startupCellChangeDisable[cell] ~= nil then
-                        local j = 1
-                        local commandArray = {}
-                        startupCellChangeDisable = startupData.onCellChange.disable[cell]
-                        local commandName = "outcome" .. j
-                        while startupCellChangeDisable[commandName] ~= nil do
-                            commandArray[j] = startupCellChangeDisable[commandName]
-                            j = j + 1
-                            commandName = "outcome" .. j
-                        end
-                        for j2 = 1, j-1 do
-                            logicHandler.RunConsoleCommandOnPlayer(pid, commandArray[j2])
-                        end
                         local startupCellChangeEnable = startupData.onCellChange.enable[cell]
+                        tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] startupData.onCellChange.enable[" .. cellDescription .. "]")
                         if startupCellChangeEnable ~= nil then
-                            for index, value in ipairs (startupCellChangeEnable) do
+                            tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] startupData.onCellChange.enable[" .. cellDescription .. "] EXISTS")
+                            for index, value in pairs (startupCellChangeEnable) do
                                 local indexArray = {}
                                 commandArray = {}
                                 local startupCellChangeEnable = startupCellChangeEnable[index]
@@ -396,6 +419,7 @@ Methods.OnCellChange = function(pid)
                                 else
                                     journal = Players[pid].data.journal
                                 end
+                                tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] startupData.onCellChange.enable[" .. cellDescription .. "] EXISTS - " .. index .. " - " .. startupQuest .. " - " .. startupIndex)
                                 local i = 1
                                 j = 1
                                 for index2, value2 in pairs(journal) do
@@ -405,6 +429,7 @@ Methods.OnCellChange = function(pid)
                                     if startupQuest == quest then
                                         indexArray[i] = index2
                                         i = i + 1
+										tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] startupData.onCellChange.enable[" .. cellDescription .. "] EXISTS - " .. index .. " - " .. startupQuest .. " - " .. startupIndex .. " - " .. quest .. " - " .. questIndex)
                                     end
                                 end
                                 for i2 = 1, i-1 do
@@ -418,14 +443,13 @@ Methods.OnCellChange = function(pid)
                                     end
                                 end
                                 for j2 = 1, j-1 do
+                                    tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] startupData.onCellChange.enable[" .. cellDescription .. "] RunConsoleCommandOnPlayer - " .. pid .. " - " .. commandArray[j2])
                                     logicHandler.RunConsoleCommandOnPlayer(pid, commandArray[j2])
                                 end
                             end
                         end
                         table.insert(cellArray, cell)
                     end
-                end
-            end
         end
     end
 end
@@ -459,7 +483,43 @@ customEventHooks.registerHandler("OnServerPostInit", function(eventStatus)
     tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Init.") 
     Methods.Initialize()
     Methods.RunStartup()
+	timed_journalchecks_5min()  -- timed function to check spefic quest states where time has to pass, because integrated time sync does not advance the quest timer (should be compatible without issues, if this is ever fixed in future updates of tes3mp)
 end)
+function timed_journalchecks_5min()
+    tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Executing timed_journalchecks_5min")
+    --tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] ".. dump(Players))
+    for pid, Player in pairs(Players) do
+        local journal
+        if config.shareJournal == true then
+            journal = WorldInstance.data.journal
+        else
+            journal = Players[Player].data.journal
+        end
+        local highest_index_a2_6_incarnate = { ["index"] = 0 }
+        for index2, value2 in pairs(journal) do
+            local journalEntry = journal[index2]
+            local quest = journalEntry.quest
+            local questIndex = journalEntry.index
+            --tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] " .. quest .. " - " .. questIndex .. " - " .. journalEntry.timestamp["daysPassed"] .. " - " .. WorldInstance.data.time.daysPassed)
+            if quest == "a2_6_incarnate" and questIndex > highest_index_a2_6_incarnate.index then
+                highest_index_a2_6_incarnate = journalEntry
+            end
+        end
+        if highest_index_a2_6_incarnate.index == 1 and WorldInstance.data.time.daysPassed - highest_index_a2_6_incarnate.timestamp.daysPassed >= 2 then -- check "if moons have come and gone"
+            if Player:IsLoggedIn() then
+                tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] quest: a2_6_incarnate - moons have come and gone, advancing quest for " .. Player.pid .. " - because highest_index_a2_6_incarnate.index = " .. highest_index_a2_6_incarnate.index)
+                logicHandler.RunConsoleCommandOnPlayer(Player.pid, "Journal a2_6_incarnate 3") -- AddJournal not permanent??? :( - using command on player instead
+                --tes3mp.ClearJournalChanges(Player.pid)
+                --tes3mp.AddJournalEntryWithTimestamp(Player.pid, "a2_6_incarnate", 3, "Nibani Maesa", WorldInstance.data.time.daysPassed, WorldInstance.data.time.month, WorldInstance.data.time.day)
+                --tes3mp.SendJournalChanges(Player.pid, true, false)
+                if config.shareJournal == true then
+                    break
+                end
+            end
+        end
+    end
+    tes3mp.StartTimer(tes3mp.CreateTimer("timed_journalchecks_5min", time.seconds(300)))
+end
 
 customEventHooks.registerHandler("OnPlayerAuthentified", function(eventStatus, pid)
     tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] OnPlayerAuthentified " .. Players[pid].name) 
@@ -467,10 +527,101 @@ customEventHooks.registerHandler("OnPlayerAuthentified", function(eventStatus, p
 end)
 
 customEventHooks.registerHandler("OnCellLoad", function(eventStatus, pid, cellDescription)
-    tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] OnCellLoad " .. cellDescription) 
-    Methods.OnCellChange(pid)
+    tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] OnCellLoad " .. cellDescription)
 end)
 
+customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid, cellDescription, objects, players)
+    tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] OnObjectActivate  - " .. pid .. " - " .. cellDescription)
+    local name = Players[pid].name:lower()
+    local cell = LoadedCells[cellDescription]
+    local isValid = eventStatus.validDefaultHandler
+
+    for n,object in pairs(objects) do
+        local objectUniqueIndex = object.uniqueIndex
+        local objectRefId = object.refId
+        if objectRefId == "divayth fyr" then
+            -- remove corprus if player is still infected and corprus cure quest is done
+            local journal
+            if config.shareJournal == true then
+                journal = WorldInstance.data.journal
+            else
+                journal = Players[pid].data.journal
+            end
+            for index2, value2 in pairs(journal) do
+                local journalEntry = journal[index2]
+                local quest = journalEntry.quest
+                local questIndex = journalEntry.index
+                tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] OnObjectActivate [" .. objectRefId .. "] check - " .. quest .. " - " .. questIndex)
+                if quest == "a2_3_corpruscure" and questIndex == 50 then
+                    spellbookindex = tes3mp.GetSpellbookChangesSize(pid)
+                    while spellbookindex > 0 do
+                        local spellid = tes3mp.GetSpellId(pid, spellbookindex)
+                        tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Player enumerate SpellBook [" .. pid .. "] >> " .. spellid .. " at index " .. spellbookindex)
+                        if(spellid == "corprus") then
+                            --logicHandler.RunConsoleCommandOnPlayer(pid, "player->RemoveEffects \"corprus\"")
+                            --logicHandler.RunConsoleCommandOnPlayer(pid, "player->AddSpell \"common disease immunity\"")
+                            --logicHandler.RunConsoleCommandOnPlayer(pid, "player->AddSpell \"blight disease immunity\"")
+                            --logicHandler.RunConsoleCommandOnPlayer(pid, "player->AddSpell \"corprus immunity\"")
+                            tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Player infected with corprus found [" .. pid .. "] >> " .. spellid .. " at index " .. spellbookindex)
+                            tes3mp.CustomMessageBox(pid, -1, "You corprus curse has been transformed", "Thank you, my lord and saviour!")
+                            tes3mp.ClearSpellbookChanges(pid)
+                            tes3mp.SetSpellbookChangesAction(pid, 2) -- remove spell
+                            tes3mp.AddSpell(pid, "corprus")
+                            tes3mp.SendSpellbookChanges(pid, false, false)
+                            tes3mp.ClearSpellbookChanges(pid)
+                            tes3mp.SetSpellbookChangesAction(pid, 1) -- add spell
+                            tes3mp.AddSpell(pid, "common disease immunity")
+                            tes3mp.AddSpell(pid, "blight disease immunity")
+                            tes3mp.AddSpell(pid, "corprus immunity")
+                            tes3mp.SendSpellbookChanges(pid, false, false)
+                            spellbookindex = 0
+                            Players[pid].data.customVariables.Skvysh.StartupScripts.applyCorprusCure = true
+                            tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Message sent, corprus cured and immunities added  [" .. pid .. "]")
+                        end
+                        spellbookindex = spellbookindex - 1
+                    end
+                    break
+                end
+            end
+        elseif objectRefId == "dagoth gares" then
+            --placeholder to give player corprus if not owned/cured upon interactin with dagoth gares corpse
+        elseif objectRefId == "nibani maesa" then -- advance a2_6_incarnate on interaction with npc, because for the npc no real time has passed
+            if config.shareJournal == true then
+                journal = WorldInstance.data.journal
+            else
+                journal = Players[pid].data.journal -- not implenented
+            end
+            local highest_index_a2_6_incarnate = { ["index"] = 0 }
+            for index2, value2 in pairs(journal) do
+                local journalEntry = journal[index2]
+                local quest = journalEntry.quest
+                local questIndex = journalEntry.index
+                if quest == "a2_6_incarnate" and questIndex > highest_index_a2_6_incarnate.index then
+                    highest_index_a2_6_incarnate = journalEntry
+                end
+            end
+            if highest_index_a2_6_incarnate.index == 3 then -- check "if moons have come and gone"
+                tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] quest: a2_6_incarnate - moons have come and gone, advancing quest for " .. pid .. " - because highest_index_a2_6_incarnate.index = " .. highest_index_a2_6_incarnate.index)
+                logicHandler.RunConsoleCommandOnPlayer(pid, "Journal a2_6_incarnate 5") -- AddJournal not permanent??? :( - using command on player instead
+                --tes3mp.ClearJournalChanges(.pid)
+                --tes3mp.AddJournalEntryWithTimestamp(pid, "a2_6_incarnate", 5, "Nibani Maesa", WorldInstance.data.time.daysPassed, WorldInstance.data.time.month, WorldInstance.data.time.day)
+                --tes3mp.SendJournalChanges(pid, true, false)
+            end
+        end
+    end
+end)
+
+customEventHooks.registerHandler("OnPlayerCellChange", function(eventStatus, pid, cellDescriptionOld, cellDescription)
+    tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] OnPlayerCellChange: " .. cellDescriptionOld .. " >> " .. cellDescription)
+    --Methods.OnCellChange(pid, cellDescriptionOld, cellDescription)
+	-- There is an issue, if poeple are loggin in, in an cell with disable commands attached, where the disable and enable commands are too close together to register
+	-- a timed function is needed because of this and fixes this problem.
+	tes3mp.StartTimer(tes3mp.CreateTimerEx("delayed_cellchange_reaction", time.seconds(.5), "iss", pid, cellDescriptionOld, cellDescription))
+end)
+function delayed_cellchange_reaction(pid, cellDescriptionOld, cellDescription)
+    Methods.OnCellChange(pid, cellDescriptionOld, cellDescription)
+	tes3mp.LogMessage(enumerations.log.INFO, "[startupScripts] Executing delayed OnPlayerCellChange: " .. cellDescriptionOld .. " >> " .. cellDescription)
+end
 
 
 return Methods
