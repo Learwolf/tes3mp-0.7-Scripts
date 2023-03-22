@@ -10,7 +10,7 @@
 		* Place `support.lua` inside your `\tes3mp-server\server\scripts\custom` folder.
 		* Open `customScripts.lua` found inside your `\tes3mp-server\server\scripts` folder with a text editor such as notepad.
 		* Paste the following onto a new line, and ensure there are no -- dashes infront of it:
-			require("custom.support.support")
+			require("custom.support")
 		* Save `customScripts.lua` and relaunch your server. (Be sure to edit any configurations in this script before starting your server!)
 	
 	FEATURES:
