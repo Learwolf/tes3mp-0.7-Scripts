@@ -133,8 +133,8 @@ local function Load()
 end
 
 customEventHooks.registerHandler("OnServerPostInit", function(eventStatus)
-	local file = jsonInterface.load("custom/supportTickets.json") --io.open(tes3mp.GetModDir() .. "/custom/supportTickets.json", "r") --jsonInterface.load("custom/"..pouchData.pouchDB..".json")
-	if ticketData.ticketNum == nil then
+	local file = jsonInterface.load("custom/supportTickets.json")
+	if ticketData == nil then
 		ticketData = {ticketNum = 0, openTickets = {}, closedTickets = {}}
 		Save()
 	end
